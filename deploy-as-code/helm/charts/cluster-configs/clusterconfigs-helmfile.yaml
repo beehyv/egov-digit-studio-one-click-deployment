@@ -2,6 +2,7 @@ templates:
   default: &default
     version: 0.1.0
     namespace: egov
+    # Valid values for missingFileHandler: "Error", "Warn", "Info", "Debug". Default is "Error".
     missingFileHandler: Warn
     values:
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml

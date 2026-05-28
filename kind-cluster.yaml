@@ -1,0 +1,33 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: digit-studio
+
+nodes:
+  - role: control-plane
+    # Expose ports for ingress-nginx on the host
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+
+  - role: worker
+    # Label matches ingress-nginx and studio-services node selectors
+    labels:
+      node-role: workload
+
+  - role: worker
+    labels:
+      node-role: workload
+
+# Increase resource limits for the kind nodes (inherited from Docker daemon)
+# Ensure Docker Desktop has at least 10 GB RAM and 8 CPUs allocated.
+# On Linux with systemd: these limits come from the host directly.

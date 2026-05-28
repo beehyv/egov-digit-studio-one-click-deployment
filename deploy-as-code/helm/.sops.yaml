@@ -1,19 +1,12 @@
-# creation rules are evaluated sequentially, the first match wins
+# SOPS creation rules — evaluated sequentially, first match wins.
+# Plaintext secrets files (testing, local) are intentionally excluded.
+# For new cloud environments, add a path_regex + kms entry below.
+
 creation_rules:
-        # upon creation of a file that matches the pattern *dev.yaml,
-        # KMS set A is used
-        # eGOV Internal ------------------------------------------------------------------------------------------------------------- #
-        - path_regex: environments/digit\-lts\-secrets\.yaml$
-          kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'
-        - path_regex: environments/central\-instance\-secrets\.yaml$
-          kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'
-        - path_regex: environments/central\-instance\-staging\-secrets\.yaml$
-          kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'
-        - path_regex: environments/unified\-demo\-secrets\.yaml$
-          kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'
-        - path_regex: environments/unified\-demo\-staging\-secrets\.yaml$
-          kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'
-        - path_regex: environments/unified\-demo\-studio\-secrets\.yaml$
-          kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'
-        - path_regex: environments/unified\-demo\-works\-secrets\.yaml$
-          kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'
+  # ── Plaintext (no encryption) — local/kind testing only ──────────────────────
+  - path_regex: environments/testing\-secrets\.yaml$
+
+  # ── Cloud environments — encrypted with eGOV KMS key ─────────────────────────
+  # Add new cloud env secrets files here following the same pattern:
+  # - path_regex: environments/<env-name>\-secrets\.yaml$
+  #   kms: 'arn:aws:kms:ap-south-1:218381940040:key/9a3b0835-7713-4925-8b3d-da7e421d28d2'

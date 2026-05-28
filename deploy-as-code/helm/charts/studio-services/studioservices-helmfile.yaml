@@ -14,33 +14,49 @@ templates:
 
 
 releases:
-  - name: digit-studio # Replace with your desired namespace
+  - name: digit-studio
     chart: ./digit-studio
     installed: true
     <<: *default
 
-  - name: public-service # Replace with your desired namespace
+  - name: public-service
     chart: ./public-service
     installed: true
     <<: *default
 
-  - name: public-service-init # Replace with your desired namespace
+  - name: public-service-init
     chart: ./public-service-init
     installed: true
     <<: *default
 
-  - name: studio-individual # Replace with your desired namespace
+  - name: studio-individual
     chart: ./studio-individual
     installed: true
     <<: *default
 
-  - name: studio-pdf # Replace with your desired namespace
+  - name: studio-pdf
     chart: ./studio-pdf
     installed: true
     <<: *default
 
-  - name: studio-service-request # Replace with your desired namespace
+  - name: studio-service-request
     chart: ./studio-service-request
     installed: true
     <<: *default
+
+  - name: health-individual
+    chart: ./health-individual
+    installed: true
+    <<: *default
+    set:
+      - name: image.tag
+        value: {{ env "HEALTH_INDIVIDUAL_TAG" | default (requiredEnv "COMMON_TAG") }}
+
+  - name: health-service-request
+    chart: ./health-service-request
+    installed: true
+    <<: *default
+    set:
+      - name: image.tag
+        value: {{ env "HEALTH_SERVICE_REQUEST_TAG" | default (requiredEnv "COMMON_TAG") }}
 

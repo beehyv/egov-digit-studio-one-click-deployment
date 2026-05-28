@@ -103,3 +103,8 @@ releases:
     chart: ./user-otp
     installed: true
     <<: *default
+
+  - name: egov-hrms
+    chart: ./egov-hrms
+    installed: true
+    <<: *default

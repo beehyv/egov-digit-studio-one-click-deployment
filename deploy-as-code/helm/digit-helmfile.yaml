@@ -1,9 +1,24 @@
-#checking helmfile
+# Root helmfile — single entrypoint for Digit Studio one-click deployment.
+#
+# Deploy order follows dependency layers (top to bottom):
+#   1. cluster-configs  — namespace creation, egov-config/egov-service-host configmaps,
+#                         secrets, RBAC, root ingress. Every service depends on these at boot.
+#   2. backbone         — postgres, kafka, redis, elasticsearch, minio, ingress-nginx
+#   3. core-services    — DIGIT core microservices + egov-hrms
+#   4. studio-services  — digit-studio stack + health-individual + health-service-request
+#   5. monitoring       — prometheus, grafana, loki (optional)
+#
+# Usage:
+#   export HELMFILE_ENV=unified-demo-studio
+#   export COMMON_TAG=v2.9.2-4a60f20
+#   helmfile -f digit-helmfile.yaml apply --include-needs=true
+#
+# Comment out any path below to skip a layer during incremental deploys.
+
 helmfiles:
-  # - path: ./charts/cluster-configs/clusterconfigs-helmfile.yaml
-  # - path: ./charts/backbone-services/backboneservices-helmfile.yaml
-  # - path: ./charts/core-services/coreservices-helmfile.yaml
-  # - path: ./charts/monitoring/monitoring-helmfile.yaml
+  - path: ./charts/cluster-configs/clusterconfigs-helmfile.yaml
+  - path: ./charts/backbone-services/backboneservices-helmfile.yaml
+  - path: ./charts/core-services/coreservices-helmfile.yaml
   - path: ./charts/studio-services/studioservices-helmfile.yaml
-  # - path: ./charts/business-services/businessservices-helmfile.yaml   # for hrms service
-  # - path: ./charts/health-services/healthservices-helmfile.yaml
+  # monitoring: comment out for local/kind — heavyweight and needs prometheus config in env file
+  # - path: ./charts/monitoring/monitoring-helmfile.yaml

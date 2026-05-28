@@ -1,145 +1,188 @@
 repositories:
-- name: bitnami
-  url: https://charts.bitnami.com/bitnami
-- name: jupyterhub
-  url: https://hub.jupyter.org/helm-chart/
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: jupyterhub
+    url: https://hub.jupyter.org/helm-chart/
 
-templates: 
-  default: &default
+# Note: releases are written fully explicit (no <<: *default anchor merges) because
+# go-yaml v3 (helmfile 0.166+) rejects duplicate keys produced by merging
+# a template's values: block with a release's own values: block.
+#
+# Inline secret/domain references use env with safe defaults so helmfile list/diff
+# works without real credentials. For real deploys, export before running:
+#   export DOMAIN DB_PASSWORD ES_PASSWORD KAFKA_CLUSTER_ID
+# For cloud (SOPS): CI extracts these from the decrypted secrets file.
+
+releases:
+  - name: minio
+    chart: ./minio
+    version: 13.3.1
+    installed: true
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-
-releases:
-  - name: minio
-    installed: true
-    chart: ./minio
-    version: 13.3.1
-    <<: *default
-    values:
       - ./minio/values.yaml
 
   - name: postgres
-    installed: true
     chart: ./postgres
     version: 11.9.13
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./postgres/values.yaml
-      - global:
-          postgresql:
-            auth:
-              postgresPassword: {{ .Values.secrets.db.password | quote }}
+    set:
+      - name: global.postgresql.auth.postgresPassword
+        value: {{ env "DB_PASSWORD" | default "postgres" }}
 
   - name: redis
-    installed: true
     chart: ./redis
     version: 7.2.4
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./redis/values.yaml
 
   - name: elasticsearch-master
     chart: ./elasticsearch-master
     version: 8.11.3
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./elasticsearch-master/values.yaml
-      - secret:
-          password: {{ .Values.secrets.elasticsearch.password }}
+    set:
+      - name: secret.password
+        value: {{ env "ES_PASSWORD" | default "elastic_local" }}
 
   - name: elasticsearch-data
     chart: ./elasticsearch-data
     version: 8.11.3
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./elasticsearch-data/values.yaml
 
   - name: kafka-kraft
-    installed: true
     chart: ./kafka-kraft
     version: 26.2.0
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./kafka-kraft/values.yaml
     set:
       - name: kraft.clusterId
-        value: {{ .Values.secrets.kafka.clusterID }}
+        value: {{ env "KAFKA_CLUSTER_ID" | default "bXlsb2NhbGNsdXN0ZXJpZDAx" }}
 
   - name: cert-manager
     chart: ./cert-manager
-    namespace: backbone-dev
-    installed: true
     version: v1.16.2
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     disableValidation: true
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./cert-manager/values.yaml
 
   - name: kibana
     chart: ./kibana
     version: 8.11.3
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     force: true
-    <<: *default
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./kibana/values.yaml
-      - ingress:
-          hosts:
-            - host: {{ .Values.global.domain }}
-              paths:
-                - path: /kibana
-          tls:
-            - secretName: {{ .Values.global.domain }}-tls-certs
-              hosts:
-                - {{ .Values.global.domain }}
+    set:
+      - name: ingress.hosts[0].host
+        value: {{ env "DOMAIN" | default "localhost" }}
+      - name: ingress.hosts[0].paths[0].path
+        value: /kibana
+      - name: ingress.tls[0].secretName
+        value: {{ env "DOMAIN" | default "localhost" }}-tls-certs
+      - name: ingress.tls[0].hosts[0]
+        value: {{ env "DOMAIN" | default "localhost" }}
 
   - name: ingress-nginx
-    installed: true
     chart: ./ingress-nginx
     version: 4.10.0
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./ingress-nginx/values.yaml
-      - domain: {{ .Values.global.domain }}
+    set:
+      - name: domain
+        value: {{ env "DOMAIN" | default "localhost" }}
 
   - name: playground
-    installed: true
     chart: ./playground
     version: 0.1.0
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./playground/values.yaml
 
   - name: jupyterhub
-    installed: true
     chart: ./jupyterhub
     version: 4.0.0
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./jupyterhub/values.yaml
-      - ingress:
-          hosts:
-            - {{ .Values.global.domain }}
-          tls:
-            - secretName: {{ .Values.global.domain }}-tls-certs
-              hosts:
-                - "{{ .Values.global.domain }}"
+    set:
+      - name: ingress.hosts[0]
+        value: {{ env "DOMAIN" | default "localhost" }}
+      - name: ingress.tls[0].secretName
+        value: {{ env "DOMAIN" | default "localhost" }}-tls-certs
+      - name: ingress.tls[0].hosts[0]
+        value: {{ env "DOMAIN" | default "localhost" }}
 
   - name: pgadmin4
-    installed: true
     chart: ./pgadmin
     version: 4.0.0
-    <<: *default
+    installed: true
+    namespace: backbone-dev
+    missingFileHandler: Warn
     values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
       - ./pgadmin/values.yaml
-      - ingress:
-          hosts:
-            - host: {{ .Values.global.domain }}
-              paths:
-                - path: /pgadmin4
-                  pathType: Prefix
-          tls:
-            - secretName: {{ .Values.global.domain }}-tls-certs
-              hosts:
-                - {{ .Values.global.domain }}
+    set:
+      - name: ingress.hosts[0].host
+        value: {{ env "DOMAIN" | default "localhost" }}
+      - name: ingress.hosts[0].paths[0].path
+        value: /pgadmin4
+      - name: ingress.hosts[0].paths[0].pathType
+        value: Prefix
+      - name: ingress.tls[0].secretName
+        value: {{ env "DOMAIN" | default "localhost" }}-tls-certs
+      - name: ingress.tls[0].hosts[0]
+        value: {{ env "DOMAIN" | default "localhost" }}

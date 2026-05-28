@@ -1,0 +1,225 @@
+global:
+  domain: "localhost"          # replace with real domain when deploying to a cluster
+  setup: quickstart            # skips TLS/cert-manager; use "fullsetup" for cloud
+  tracing-enabled: false
+  namespace: egov
+  nodepool:
+    nodeAffinity: false
+    selector: ""
+    toleration: ""
+
+cluster-configs:
+  secrets:
+    db:
+      namespace: egov
+      name: db
+    egov-si-microservice:
+      namespace: egov
+      name: egov-si-microservice
+    egov-pg-service:
+      namespace: egov
+      name: egov-pg-service
+    egov-notification-mail:
+      namespace: egov
+      name: egov-notification-mail
+    egov-notification-sms:
+      namespace: egov
+      name: egov-notification-sms
+    elasticsearch-master-creds:
+      namespace: backbone-dev
+      name: elasticsearch-master-credentials
+    git-sync:
+      namespace: egov
+      name: git-creds
+
+  namespaces:
+    create: true               # kind/minikube: namespaces must be pre-created
+    values:
+      - egov
+      - backbone-dev
+      - core-dev
+      - studio-dev
+      - monitoring
+
+  networkpolicy:
+    namespaces: []             # disabled for local; enable per-ns in cloud
+
+  rbac:
+    - role: user
+      namespaces: [ egov, core-dev, studio-dev ]
+    - role: admin
+      namespaces: [ egov, core-dev, studio-dev ]
+
+  root-ingress:
+    cert-issuer: ""            # empty for quickstart; set "letsencrypt-prod" for fullsetup
+    name: root-ingress
+    namespace: egov
+    appRoot: ""
+    serviceName: ingress-nginx-controller
+    servicePort: 80
+
+  configmaps:
+    egov-config:
+      name: egov-config
+      namespace:
+        - egov
+        - core-dev
+        - studio-dev
+      data:
+        # ── Database (in-cluster postgres deployed by backbone-services) ──────────────
+        db-host: "postgres.backbone-dev"
+        db-name: "egov_db"
+        db-url: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db?currentSchema=public"
+        db-url-works: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db"
+        bpa-db-url: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db"
+        erp-db-url: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db"
+        # ── Infrastructure (backbone-dev namespace) ───────────────────────────────────
+        es-host: "elasticsearch-data.backbone-dev"
+        es-indexer-host: "http://elasticsearch-data.backbone-dev:9200/"
+        es-infra-host: "elasticsearch-data.backbone-dev"
+        kafka-brokers: "kafka-kraft-controller-headless.backbone-dev:9092"
+        kafka-infra-brokers: "kafka-kraft-controller-headless.backbone-dev:9092"
+        # ── Platform ──────────────────────────────────────────────────────────────────
+        domain: "localhost"
+        egov-services-fqdn-name: "http://localhost/"
+        flyway-locations: "filesystem:/flyway/sql,filesystem:/flyway/seed,filesystem:/flyway/qa"
+        logging-level-jdbc: "debug"
+        mobile-validation-workaround: "true"
+        s3-assets-bucket: "egov-test-assets"
+        serializers-timezone-in-ist: "true"
+        server-tomcat-max-threads: "10"
+        server-tomcat-max-connections: "100"
+        sms-enabled: "false"
+        spring-datasource-tomcat-initialSize: "1"
+        spring-datasource-tomcat-max-active: "3"
+        spring-datasource-tomcat-min-idle: "1"
+        spring-jpa-show-sql: "true"
+        tracer-errors-provideexceptionindetails: "true"
+        timezone: "Asia/Kolkata"
+        state-level-tenantid-length: "1"
+        state-schema-index-position-tenantid: "0"
+        is-environment-central-instance: "false"
+        egov-state-level-tenant-id: "pg"
+        state-level-tenant-id: "pg"
+        central-level-tenant: "pg"
+        egov-bnd-freedownload-tenants: "pg.testing"
+        egov-bnd-live-citizen-tenants: "pg.testing"
+        egov-internal-microservice-user-uuid: "e1f57dfe-35a0-494a-911d-22cd3f786612"
+        care-db-name: "care_db"
+        care-db-port: "5432"
+
+    egov-service-host:
+      name: egov-service-host
+      namespace:
+        - egov
+        - core-dev
+        - studio-dev
+      data:
+        # ── Core services (core-dev namespace) ───────────────────────────────────────
+        egov-accesscontrol: "http://egov-accesscontrol.core-dev:8080/"
+        egov-enc-service: "http://egov-enc-service.core-dev:8080/"
+        egov-user: "http://egov-user.core-dev:8080/"
+        egov-user-egov: "http://egov-user.core-dev:8080/"
+        egov-location: "http://egov-location.core-dev:8080/"
+        egov-filestore: "http://egov-filestore.core-dev:8080/"
+        egov-localization: "http://egov-localization.core-dev:8080/"
+        egov-idgen: "http://egov-idgen.core-dev:8080/"
+        egov-otp: "http://egov-otp.core-dev:8080/"
+        egov-mdms-service: "http://egov-mdms-service.core-dev:8080/"
+        mdms-v2: "http://mdms-v2.core-dev:8080/"
+        egov-mdms-service-v2: "http://mdms-v2.core-dev:8080/"
+        mdms-service-v2: "http://mdms-v2.core-dev:8080/"
+        egov-workflow-v2: "http://egov-workflow-v2.core-dev:8080/"
+        egov-workflow: "http://egov-workflow-v2.core-dev:8080/"
+        egov-searcher: "http://egov-searcher.core-dev:8080/"
+        egov-indexer: "http://egov-indexer.core-dev:8080/"
+        egov-persister: "http://egov-persister.core-dev:8080/"
+        egov-notification-sms: "http://egov-notification-sms.core-dev:8080/"
+        egov-url-shortening: "http://egov-url-shortening.core-dev:8080/"
+        egov-hrms: "http://egov-hrms.core-dev:8080/"
+        boundary-service: "http://boundary-service.core-dev:8080/"
+        egov-boundary: "http://boundary-service.core-dev:8080/"
+        pdf-service: "http://pdf-service.core-dev:8080/"
+        egov-pdf: "http://pdf-service.core-dev:8080/"
+        user-otp: "http://user-otp.core-dev:8080/"
+        inbox: "http://inbox.core-dev:8080/"
+        # ── Studio services (studio-dev namespace) ───────────────────────────────────
+        public-service: "http://public-service.studio-dev:8080/"
+        public-service-init: "http://public-service-init.studio-dev:8080/"
+        studio-individual: "http://studio-individual.studio-dev:8080/"
+        studio-service-request: "http://studio-service-request.studio-dev:8080/"
+        health-individual: "http://health-individual.studio-dev:8080/"
+        health-service-request: "http://health-service-request.studio-dev:8080/"
+        # ── Backbone services (backbone-dev namespace) ───────────────────────────────
+        minio-url: "http://minio.backbone-dev:9000/"
+        gateway: "http://ingress-nginx-controller.backbone-dev:80/"
+        # ── Unused in testing but kept for reference ──────────────────────────────────
+        internal-gateway-scg: "http://internal-gateway-scg.egov:8080/"
+        billing-service: "http://billing-service.egov:8080/"
+        collection-services: "http://collection-services.egov:8080/"
+        egov-common-masters: "http://internal-gateway-scg.egov:8080/"
+        pt-services-v2: "http://pt-services-v2.egov:8080/"
+        property-services: "http://property-services.egov:8080/"
+        tl-services: "http://tl-services.egov:8080/"
+        vehicle: "http://vehicle.egov:8080/"
+        fsm: "http://fsm.egov:8080/"
+        individual: "http://individual.egov:8080/"
+        household: "http://household.egov:8080/"
+        audit-service: "http://audit-service.egov:8080/"
+        bulk-upload: "http://bulk-upload.egov:8080/"
+        pqm-service: "http://pqm-service.egov:8080"
+        bpa-services: "http://bpa-services.egov:8080/"
+        egov-edcr: "http://egov-edcr.egov:8080/"
+        ws-services: "http://ws-services.egov:8080/"
+        sw-services: "http://sw-services.egov:8080/"
+
+        jmx-exporter-config:
+          namespace: [ egov, core-dev, studio-dev ]
+
+# ── Per-service overrides ──────────────────────────────────────────────────────────────
+
+public-service:
+  replicas: 1
+  heap: "-Xmx256m -Xms256m"
+  memory_limits: 512Mi
+  mdms-search-enpoint: "mdms-v2/v1/_search"
+  mdms-search-v2-endpoint: "mdms-v2/v2"
+  mdms-v2-search-endpoint: "mdms-v2/v2/_search"
+  mdms-v2-create-endpoint: "mdms-v2/v2/_create"
+  mdms-service-host: "http://mdms-v2.core-dev:8080/"
+  mdms-v2-update-endpoint: "mdms-v2/v2/_update"
+
+public-service-init:
+  replicas: 1
+  heap: "-Xmx512m -Xms256m"
+  memory_limits: 768Mi
+  mdms-search-enpoint: "mdms-v2/v1/_search"
+  mdms-search-v2-endpoint: "mdms-v2/v2"
+  mdms-v2-search-endpoint: "mdms-v2/v2/_search"
+  mdms-v2-create-endpoint: "mdms-v2/v2/_create"
+  mdms-service-host: "http://mdms-v2.core-dev:8080/"
+  mdms-v2-update-endpoint: "mdms-v2/v2/_update"
+
+egov-pg-service:
+  replicas: 0
+  axis: true
+
+inbox:
+  replicas: 1
+  service-map: '{}'
+  bs-service-map: '{}'
+  water-es-index: pg-water-services
+  sewerage-es-index: pg-sewerage-services
+
+egov-workflow-v2:
+  logging-level: "DEBUG"
+  java-args: -Dspring.profiles.active=monitoring
+  heap: "-Xmx192m -Xms192m"
+  workflow-statelevel: "true"
+  wf-max-limit: "1000"
+
+digit-studio:
+  namespace: studio-dev
+  custom-js-injection: |
+    sub_filter.conf: "
+      sub_filter  '<head>' '<head>';"
