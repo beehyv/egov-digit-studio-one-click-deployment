@@ -1,0 +1,34 @@
+namespace: playground 
+
+# Common Labels
+labels:
+  app: "playground"
+  group: "playground"
+
+# Container Configs
+image:
+  pullPolicy: IfNotPresent  
+  repository: playground
+  tag: "latest"
+
+replicas: "1"
+
+persistence:
+  enabled: true
+  dataDirSize: "20Gi"
+  storageClassName: gp3
+  accessMode: ReadWriteOnce
+  volumeMode: Filesystem
+
+extraVolumes: |
+  - name: storage
+    persistentVolumeClaim:
+      claimName: {{ .Chart.Name }}-data
+extraVolumeMounts: |
+  - mountPath: /migration
+    name: storage
+
+resources: |
+  requests:
+    memory: 6Gi
+    cpu: "2"

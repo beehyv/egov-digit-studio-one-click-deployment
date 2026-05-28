@@ -1,0 +1,23 @@
+templates:
+  default: &default
+    version: 0.1.0
+    namespace: health-dev
+    # This prevents helmfile exiting when it encounters a missing file
+    # Valid values are "Error", "Warn", "Info", "Debug". The default is "Error"
+    # Use "Debug" to make missing files errors invisible at the default log level(--log-level=INFO)
+    missingFileHandler: Warn
+    values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
+
+
+releases:
+  - name: health-individual
+    chart: ./health-individual
+    installed: true
+    <<: *default
+
+  - name: health-service-request
+    chart: ./health-service-request
+    installed: true
+    <<: *default

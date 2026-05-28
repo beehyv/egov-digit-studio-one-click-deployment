@@ -1,0 +1,145 @@
+repositories:
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami
+- name: jupyterhub
+  url: https://hub.jupyter.org/helm-chart/
+
+templates: 
+  default: &default
+    namespace: backbone-dev
+    missingFileHandler: Warn
+    values:
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
+
+releases:
+  - name: minio
+    installed: true
+    chart: ./minio
+    version: 13.3.1
+    <<: *default
+    values:
+      - ./minio/values.yaml
+
+  - name: postgres
+    installed: true
+    chart: ./postgres
+    version: 11.9.13
+    <<: *default
+    values:
+      - ./postgres/values.yaml
+      - global:
+          postgresql:
+            auth:
+              postgresPassword: {{ .Values.secrets.db.password | quote }}
+
+  - name: redis
+    installed: true
+    chart: ./redis
+    version: 7.2.4
+    <<: *default
+    values:
+      - ./redis/values.yaml
+
+  - name: elasticsearch-master
+    chart: ./elasticsearch-master
+    version: 8.11.3
+    <<: *default
+    values:
+      - ./elasticsearch-master/values.yaml
+      - secret:
+          password: {{ .Values.secrets.elasticsearch.password }}
+
+  - name: elasticsearch-data
+    chart: ./elasticsearch-data
+    version: 8.11.3
+    <<: *default
+    values:
+      - ./elasticsearch-data/values.yaml
+
+  - name: kafka-kraft
+    installed: true
+    chart: ./kafka-kraft
+    version: 26.2.0
+    <<: *default
+    values:
+      - ./kafka-kraft/values.yaml
+    set:
+      - name: kraft.clusterId
+        value: {{ .Values.secrets.kafka.clusterID }}
+
+  - name: cert-manager
+    chart: ./cert-manager
+    namespace: backbone-dev
+    installed: true
+    version: v1.16.2
+    disableValidation: true
+    values:
+      - ./cert-manager/values.yaml
+
+  - name: kibana
+    chart: ./kibana
+    version: 8.11.3
+    force: true
+    <<: *default
+    values:
+      - ./kibana/values.yaml
+      - ingress:
+          hosts:
+            - host: {{ .Values.global.domain }}
+              paths:
+                - path: /kibana
+          tls:
+            - secretName: {{ .Values.global.domain }}-tls-certs
+              hosts:
+                - {{ .Values.global.domain }}
+
+  - name: ingress-nginx
+    installed: true
+    chart: ./ingress-nginx
+    version: 4.10.0
+    <<: *default
+    values:
+      - ./ingress-nginx/values.yaml
+      - domain: {{ .Values.global.domain }}
+
+  - name: playground
+    installed: true
+    chart: ./playground
+    version: 0.1.0
+    <<: *default
+    values:
+      - ./playground/values.yaml
+
+  - name: jupyterhub
+    installed: true
+    chart: ./jupyterhub
+    version: 4.0.0
+    <<: *default
+    values:
+      - ./jupyterhub/values.yaml
+      - ingress:
+          hosts:
+            - {{ .Values.global.domain }}
+          tls:
+            - secretName: {{ .Values.global.domain }}-tls-certs
+              hosts:
+                - "{{ .Values.global.domain }}"
+
+  - name: pgadmin4
+    installed: true
+    chart: ./pgadmin
+    version: 4.0.0
+    <<: *default
+    values:
+      - ./pgadmin/values.yaml
+      - ingress:
+          hosts:
+            - host: {{ .Values.global.domain }}
+              paths:
+                - path: /pgadmin4
+                  pathType: Prefix
+          tls:
+            - secretName: {{ .Values.global.domain }}-tls-certs
+              hosts:
+                - {{ .Values.global.domain }}

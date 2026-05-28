@@ -1,0 +1,75 @@
+environments:
+  default:
+    values:
+      - namespace: monitoring
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
+      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
+---
+
+repositories:
+- name: grafana
+  url: https://grafana.github.io/helm-charts
+- name: prometheus-community
+  url: https://prometheus-community.github.io/helm-charts
+- name: jaegertracing
+  url: https://jaegertracing.github.io/helm-charts
+- name: kafka-ui
+  url: https://provectus.github.io/kafka-ui-charts
+
+releases:
+- name: loki-stack
+  installed: true
+  namespace: {{ .Values.namespace | default "default-namespace" }}
+  chart: grafana/loki-stack
+  version: 2.10.1
+  values:
+  - ./values/loki-stack.yaml
+  - {{ .Values | toYaml | nindent 8 }}
+
+- name: kube-prometheus-stack
+  installed: true
+  namespace: {{ .Values.namespace | default "default-namespace" }}
+  chart: prometheus-community/kube-prometheus-stack
+  version: 56.6.2
+  disableValidation: true
+  values:
+  - ./values/prometheus.yaml
+  - alertmanager:
+      enabled: {{ .Values.prometheus.alertmanager.enabled }}
+      config: {{ index .Values "cluster-configs" "secrets" "alertmanager" "config" | toYaml | nindent 8 }}
+  - prometheus:
+      prometheusSpec:
+        additionalScrapeConfigs: {{ .Values.prometheus.additionalScrapeConfigs | toYaml | nindent 8 }}
+        externalLabels: {{ .Values.prometheus.externalLabels | toYaml | nindent 10 }}
+        storageSpec: {{ .Values.prometheus.storageSpec | toYaml | nindent 10 }}
+        retention: {{ .Values.prometheus.retention | toYaml | nindent 10 }}
+
+- name: grafana
+  installed: true
+  namespace: {{ .Values.namespace | default "default-namespace" }}
+  chart: grafana/grafana
+  version: 7.3.0
+  values:
+  - ./values/grafana.yaml
+  - grafana.ini:
+      auth.github:
+        allowed_organizations: {{ .Values.grafana.github.allowed_organizations }}
+        role_attribute_path: {{ .Values.grafana.github.role_attribute_path }}
+  - envRenderSecret:
+      GF_AUTH_GITHUB_CLIENT_ID: {{ index .Values "cluster-configs" "secrets" "grafana" "clientID" }}
+      GF_AUTH_GITHUB_CLIENT_SECRET: {{ index .Values "cluster-configs" "secrets" "grafana" "clientSecret" }}
+  set:
+    - name: ingress.hosts[0]
+      value: {{ .Values.global.domain | quote }}
+    - name: ingress.tls[0].hosts[0]
+      value: {{ .Values.global.domain | quote }}
+
+- name: blackbox
+  installed: true
+  namespace: {{ .Values.namespace | default "default-namespace" }}
+  chart: prometheus-community/prometheus-blackbox-exporter
+  version: 8.2.0
+  values:
+  - ./values/blackbox-exporter.yaml
+  - {{ .Values | toYaml | nindent 8 }}
+
