@@ -21,9 +21,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./minio/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./minio/values.yaml
 
   - name: postgres
     chart: ./postgres
@@ -32,9 +32,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./postgres/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./postgres/values.yaml
     set:
       - name: global.postgresql.auth.postgresPassword
         value: {{ env "DB_PASSWORD" | default "postgres" }}
@@ -46,9 +46,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./redis/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./redis/values.yaml
 
   - name: elasticsearch-master
     chart: ./elasticsearch-master
@@ -57,9 +57,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./elasticsearch-master/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./elasticsearch-master/values.yaml
     set:
       - name: secret.password
         value: {{ env "ES_PASSWORD" | default "elastic_local" }}
@@ -71,9 +71,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./elasticsearch-data/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./elasticsearch-data/values.yaml
 
   - name: kafka-kraft
     chart: ./kafka-kraft
@@ -82,9 +82,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./kafka-kraft/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./kafka-kraft/values.yaml
     set:
       - name: kraft.clusterId
         value: {{ env "KAFKA_CLUSTER_ID" | default "bXlsb2NhbGNsdXN0ZXJpZDAx" }}
@@ -97,9 +97,9 @@ releases:
     missingFileHandler: Warn
     disableValidation: true
     values:
+      - ./cert-manager/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./cert-manager/values.yaml
 
   - name: kibana
     chart: ./kibana
@@ -109,9 +109,9 @@ releases:
     missingFileHandler: Warn
     force: true
     values:
+      - ./kibana/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./kibana/values.yaml
     set:
       - name: ingress.hosts[0].host
         value: {{ env "DOMAIN" | default "localhost" }}
@@ -129,9 +129,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./ingress-nginx/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./ingress-nginx/values.yaml
     set:
       - name: domain
         value: {{ env "DOMAIN" | default "localhost" }}
@@ -143,9 +143,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./playground/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./playground/values.yaml
 
   - name: jupyterhub
     chart: ./jupyterhub
@@ -156,9 +156,9 @@ releases:
     disableValidation: true
     skipSchemaValidation: true
     values:
+      - ./jupyterhub/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./jupyterhub/values.yaml
     set:
       - name: ingress.hosts[0]
         value: {{ env "DOMAIN" | default "localhost" }}
@@ -174,9 +174,9 @@ releases:
     namespace: backbone-dev
     missingFileHandler: Warn
     values:
+      - ./pgadmin/values.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
-      - ./pgadmin/values.yaml
     set:
       - name: ingress.hosts[0].host
         value: {{ env "DOMAIN" | default "localhost" }}
