@@ -153,6 +153,8 @@ releases:
     installed: true
     namespace: backbone-dev
     missingFileHandler: Warn
+    disableValidation: true
+    skipSchemaValidation: true
     values:
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml

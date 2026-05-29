@@ -6,10 +6,9 @@ HELM_DIR="${ROOT_DIR}/deploy-as-code/helm"
 HELMFILE="${HELM_DIR}/digit-helmfile.yaml"
 
 : "${HELMFILE_ENV:=testing}"
-: "${COMMON_TAG:=v2.9.2-4a60f20}"
 : "${HELMFILE_COMMAND:=apply}"
 
-# Optional per-service tag overrides (fall back to COMMON_TAG when unset)
+: "${COMMON_TAG:=v2.9.2-4a60f20}"
 : "${HEALTH_INDIVIDUAL_TAG:=${COMMON_TAG}}"
 : "${HEALTH_SERVICE_REQUEST_TAG:=${COMMON_TAG}}"
 
@@ -81,6 +80,25 @@ export HELMFILE_ENV COMMON_TAG HEALTH_INDIVIDUAL_TAG HEALTH_SERVICE_REQUEST_TAG 
 cd "${HELM_DIR}"
 
 helmfile -f "${HELMFILE}" "${COMMAND}" --include-needs=true \
+  --set boundary-service.image.tag="${COMMON_TAG}" \
+  --set egov-accesscontrol.image.tag="${COMMON_TAG}" \
+  --set egov-enc-service.image.tag="${COMMON_TAG}" \
+  --set egov-filestore.image.tag="${COMMON_TAG}" \
+  --set egov-idgen.image.tag="${COMMON_TAG}" \
+  --set egov-indexer.image.tag="${COMMON_TAG}" \
+  --set egov-localization.image.tag="${COMMON_TAG}" \
+  --set egov-mdms-service.image.tag="${COMMON_TAG}" \
+  --set egov-notification-sms.image.tag="${COMMON_TAG}" \
+  --set egov-otp.image.tag="${COMMON_TAG}" \
+  --set egov-persister.image.tag="${COMMON_TAG}" \
+  --set egov-url-shortening.image.tag="${COMMON_TAG}" \
+  --set egov-user.image.tag="${COMMON_TAG}" \
+  --set egov-workflow-v2.image.tag="${COMMON_TAG}" \
+  --set inbox.image.tag="${COMMON_TAG}" \
+  --set mdms-v2.image.tag="${COMMON_TAG}" \
+  --set pdf-service.image.tag="${COMMON_TAG}" \
+  --set user-otp.image.tag="${COMMON_TAG}" \
+  --set egov-hrms.image.tag="${COMMON_TAG}" \
   --set digit-studio.image.tag="${COMMON_TAG}" \
   --set public-service.image.tag="${COMMON_TAG}" \
   --set public-service-init.image.tag="${COMMON_TAG}" \

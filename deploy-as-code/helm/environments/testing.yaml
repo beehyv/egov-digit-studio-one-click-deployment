@@ -26,7 +26,7 @@ cluster-configs:
       namespace: egov
       name: egov-notification-sms
     elasticsearch-master-creds:
-      namespace: backbone-dev
+      namespace: [backbone-dev, egov]
       name: elasticsearch-master-credentials
     git-sync:
       namespace: egov

@@ -7,8 +7,6 @@ templates:
     # Use "Debug" to make missing files errors invisible at the default log level(--log-level=INFO)
     missingFileHandler: Warn
     values:
-      - image:
-          tag: '{{ requiredEnv "COMMON_TAG" }}'
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
 
