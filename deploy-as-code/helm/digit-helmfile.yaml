@@ -17,7 +17,7 @@
 
 helmfiles:
   - path: ./charts/cluster-configs/clusterconfigs-helmfile.yaml
-  - path: ./charts/backbone-services/backboneservices-helmfile.yaml.gotmpl
+  - path: ./charts/backbone-services/backboneservices-helmfile.yaml
   - path: ./charts/core-services/coreservices-helmfile.yaml
   - path: ./charts/studio-services/studioservices-helmfile.yaml
   # monitoring: comment out for local/kind — heavyweight and needs prometheus config in env file
