@@ -3,22 +3,10 @@ global:
   setup: quickstart            # skips TLS/cert-manager; use "fullsetup" for cloud
   tracing-enabled: false
   namespace: core
-  containerRegistry: egovio
   nodepool:
     nodeAffinity: false
     selector: ""
     toleration: ""
-
-# Single place for core + digit-studio image tags (all charts using common library)
-images:
-  registry: egovio
-  defaultTag: v2.9.2-4a60f20
-  # Per-chart overrides (Helm release / chart name). Omit a service to use defaultTag.
-  overrides: {}
-  # Example:
-  #   health-individual: Individual-master-register-studio-d307985
-  #   health-service-request: multiarch-changes-digit-studio-3fd88be
-  #   digit-studio: digit-studio-v1.0.0
 
 cluster-configs:
   secrets:
