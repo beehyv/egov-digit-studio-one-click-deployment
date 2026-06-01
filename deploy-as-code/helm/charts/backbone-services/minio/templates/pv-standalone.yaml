@@ -19,7 +19,12 @@ spec:
   claimRef:
     namespace: {{ .Values.namespace }}
     name: {{ template "name" . }}
-  {{- if .Values.persistence.aws }}
+  {{- if eq .Values.global.setup "quickstart" }}
+  storageClassName: manual
+  hostPath:
+    path: "/kube/minio"
+    type: DirectoryOrCreate
+  {{- else if .Values.persistence.aws }}
   awsElasticBlockStore:
     volumeID: {{ index $.Values "persistence" "aws" "volumeId" }}
     fsType: ext4
