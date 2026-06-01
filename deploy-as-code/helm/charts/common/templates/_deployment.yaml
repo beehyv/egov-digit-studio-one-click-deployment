@@ -87,7 +87,7 @@ spec:
       {{- if .Values.initContainers.dbMigration.enabled }}
       {{ with .Values.initContainers.dbMigration}}
       - name: "db-migration"
-        image: {{ template "common.image" (dict "Values" $.Values "repository" .image.repository "tag" .image.tag) }}
+        image: {{ template "common.image" (dict "Values" $.Values "repository" .image.repository "tag" .image.tag "chartName" $.Chart.Name) }}
         imagePullPolicy: {{ .image.pullPolicy }} 
       {{- end }}    
         {{- if .Values.initContainers.dbMigration.env }}               
@@ -98,7 +98,7 @@ spec:
       {{- if .Values.initContainers.gitSync.enabled }}
       {{ with .Values.initContainers.gitSync }}
       - name: "git-sync"
-        image: {{ template "common.image" (dict "Values" $.Values "repository" .image.repository "tag" .image.tag) }}
+        image: {{ template "common.image" (dict "Values" $.Values "repository" .image.repository "tag" .image.tag "chartName" $.Chart.Name) }}
         imagePullPolicy: {{ .image.pullPolicy }}   
       {{- end }}
         securityContext:
@@ -120,7 +120,7 @@ spec:
         {{- tpl . $ | nindent 8 }}
       {{- end }}      
         - name: {{ template "common.name" . }}
-          image: {{ template "common.image" (dict "Values" $.Values "repository" .Values.image.repository "tag" .Values.image.tag) }}
+          image: {{ template "common.image" (dict "Values" $.Values "repository" .Values.image.repository "tag" .Values.image.tag "chartName" .Chart.Name) }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}  
       {{- if .Values.args }}              
           args:  

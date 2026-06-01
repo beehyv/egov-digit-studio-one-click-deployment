@@ -17,10 +17,17 @@ group: {{ .Values.labels.group }}
 {{- end }}    
 {{- end }}
 
+{{- define "common.imageTag" -}}
+{{- $chartName := .chartName | default "" -}}
+{{- .tag | default (index .Values.images.overrides $chartName) | default .Values.images.defaultTag | default .Values.global.image.tag | required "Image tag: set images.defaultTag in environments/<HELMFILE_ENV>.yaml (or image.tag / images.overrides.<chart>)" -}}
+{{- end -}}
+
 {{- define "common.image" -}}
-{{- if contains "/" .repository -}}      
-{{- printf "%s:%s" .repository  ( required "Tag is mandatory" .tag ) -}}
+{{- $tag := include "common.imageTag" . -}}
+{{- if contains "/" .repository -}}
+{{- printf "%s:%s" .repository $tag -}}
 {{- else -}}
-{{- printf "%s/%s:%s" $.Values.global.containerRegistry .repository ( required "Tag is mandatory" .tag ) -}}
+{{- $registry := .Values.images.registry | default .Values.global.containerRegistry -}}
+{{- printf "%s/%s:%s" $registry .repository $tag -}}
 {{- end -}}
 {{- end -}}

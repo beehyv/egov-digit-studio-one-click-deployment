@@ -37,7 +37,7 @@ spec:
             {{- tpl . $ | nindent 12 }}
           {{- end }}            
           - name: {{ template "common.name" . }}
-            image: {{ template "common.image" (dict "Values" $.Values "repository" .Values.image.repository "tag" .Values.image.tag) }}
+            image: {{ template "common.image" (dict "Values" $.Values "repository" .Values.image.repository "tag" .Values.image.tag "chartName" .Chart.Name) }}
             imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.command }}  
             command:

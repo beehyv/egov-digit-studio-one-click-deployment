@@ -3,7 +3,7 @@ labels:
   app: "pgadmin"
   group: "pgadmin"
 
-namespace: playground
+namespace: backbone
 # Ingress Configs
 ingress:
   enabled: true

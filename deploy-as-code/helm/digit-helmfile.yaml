@@ -11,7 +11,7 @@
 #
 # Usage:
 #   export HELMFILE_ENV=unified-demo-studio
-#   export COMMON_TAG=v2.9.2-4a60f20
+#   Set image tags in environments/<HELMFILE_ENV>.yaml → images.defaultTag (+ images.overrides)
 #   helmfile -f digit-helmfile.yaml apply --include-needs=true
 #
 # Comment out any path below to skip a layer during incremental deploys.

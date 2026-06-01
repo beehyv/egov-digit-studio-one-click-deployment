@@ -7,10 +7,10 @@ cluster-configs:
 
   root-ingress:
     name: root-ingress
-    namespace: core
+    namespace: digit-studio
     cert-issuer: "letsencrypt-prod"
-    appRoot: citizen
-    serviceName: citizen
+    appRoot: digit-studio
+    serviceName: digit-studio
     servicePort: 80
 
   nginx-errors:
@@ -78,7 +78,7 @@ cluster-configs:
       name: kibana-infra-creds     
 
     pgadmin: 
-      namespace: playground
+      namespace: backbone
       name: pgadmin
 
   
