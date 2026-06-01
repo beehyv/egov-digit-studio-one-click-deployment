@@ -612,6 +612,9 @@ prePuller:
   hook:
     enabled: false
     pullOnlyOnChanges: true
+    serviceAccountImagePuller:
+      create: true
+      annotations: {}
     # image and the configuration below relates to the hook-image-awaiter Job
     image:
       name: quay.io/jupyterhub/k8s-image-awaiter
@@ -632,6 +635,9 @@ prePuller:
       annotations: {}
   continuous:
     enabled: true
+    serviceAccount:
+      create: true
+      annotations: {}
   pullProfileListImages: true
   extraImages: {}
   pause:
