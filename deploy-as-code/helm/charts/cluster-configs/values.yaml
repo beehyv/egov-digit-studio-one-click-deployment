@@ -91,11 +91,11 @@ cluster-configs:
       name: alertmanager-main      
 
     jenkins:
-      namespace: jenkins
+      namespace: backbone
       name: jenkins
 
     postgres:
-      namespace: jenkins
+      namespace: backbone
       name: postgres
 
     elasticsearch-master-creds:
