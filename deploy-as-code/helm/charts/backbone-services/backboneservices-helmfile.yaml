@@ -7,10 +7,10 @@ repositories:
 
 templates:
   default: &default
-    namespace: backbone-dev
+    namespace: backbone
     missingFileHandler: Warn
     values:
-      - namespace: backbone-dev
+      - namespace: backbone
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
       - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
 

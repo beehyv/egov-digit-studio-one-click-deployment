@@ -4,7 +4,7 @@
 global:
     containerRegistry: egovio
 
-namespace: egov
+namespace: core
 replicas: 1
 httpPort: 8080
 appType: ""
@@ -319,7 +319,7 @@ serviceMonitor:
   # interval: 2m  
 
 cron:
-  namespace: egov
+  namespace: core
   concurrencyPolicy: Forbid
   restartPolicy: OnFailure
   httpPort: 8080

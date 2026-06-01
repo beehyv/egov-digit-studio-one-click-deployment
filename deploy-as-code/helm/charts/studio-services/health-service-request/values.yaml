@@ -3,10 +3,10 @@ labels:
   app: "health-service-request"
   group: "rainmaker"
 
-namespace: egov
+namespace: digit-studio
 # Ingress Configs
 ingress:
-  namespace: egov
+  namespace: digit-studio
   enabled: true
   zuul: true
   context: "health-service-request"

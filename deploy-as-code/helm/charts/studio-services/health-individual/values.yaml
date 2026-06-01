@@ -3,11 +3,11 @@ labels:
   app: "health-individual"
   group: "core"
 
-namespace: egov
+namespace: digit-studio
 
 # Ingress Configs
 ingress:
-  namespace: egov
+  namespace: digit-studio
   enabled: true
   zuul: true
   context: "health-individual"
