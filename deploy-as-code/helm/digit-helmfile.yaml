@@ -1,8 +1,9 @@
 # Root helmfile — single entrypoint for Digit Studio one-click deployment.
 #
 # Deploy order follows dependency layers (top to bottom):
-#   1. cluster-configs  — namespace creation, egov-config/egov-service-host configmaps,
-#                         secrets, RBAC, root ingress. Every service depends on these at boot.
+#   1. cluster-configs  — namespace creation (core, backbone, digit-studio, monitoring),
+#                         egov-config / egov-service-host ConfigMaps, Secrets, RBAC, root ingress.
+#                         Every service depends on these at boot.
 #   2. backbone         — postgres, kafka, redis, elasticsearch, minio, ingress-nginx
 #   3. core-services    — DIGIT core microservices + egov-hrms
 #   4. studio-services  — digit-studio stack + health-individual + health-service-request

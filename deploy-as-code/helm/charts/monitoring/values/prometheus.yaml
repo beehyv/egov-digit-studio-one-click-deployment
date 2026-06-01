@@ -3806,7 +3806,7 @@ prometheus:
     additionalScrapeConfigs:
       - job_name: 'nginx-ingress-metrics'
         static_configs:
-          - targets: ['nginx-ingress-metrics.egov:10254']
+          - targets: ['nginx-ingress-metrics.core:10254']
       - job_name: 'blackbox'
         metrics_path: /probe
         params:

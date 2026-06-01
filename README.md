@@ -1,150 +1,200 @@
-# egov-digit-studio-one-click-deployment
+# Digit Studio — Kubernetes one-click deploy
 
-One-click Kubernetes deployment for **Digit Studio**, modeled on [DIGIT-DevOps](https://github.com/egovernments/DIGIT-DevOps) `deploy-as-code` with Helmfile composition.
+Helmfile deploy for Digit Studio on Kubernetes. Pattern matches [DIGIT-DevOps](https://github.com/egovernments/DIGIT-DevOps) `deploy-as-code`.
 
-All layers are orchestrated from a **single root helmfile**:
+**Entry point:** `deploy-as-code/helm/digit-helmfile.yaml`
 
+---
+
+## Prerequisites
+
+### Tools (all environments)
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [kubectl](https://kubernetes.io/docs/tasks/tools/) | matches cluster | Apply and verify resources |
+| [Helm](https://helm.sh/) | 3+ | Chart installs (used by Helmfile) |
+| [Helmfile](https://github.com/helmfile/helmfile) | latest stable | Orchestrates layered deploy |
+| [Docker](https://docs.docker.com/get-docker/) | — | Required for Kind; image pulls on nodes |
+
+**Cloud / encrypted secrets (optional):** [SOPS](https://github.com/getsops/sops) + AWS KMS per `deploy-as-code/helm/.sops.yaml`.
+
+### Kubernetes cluster
+
+You need a working cluster and a kubeconfig context:
+
+```bash
+kubectl cluster-info
+kubectl get nodes
 ```
-deploy-as-code/helm/digit-helmfile.yaml
+
+Supported targets:
+
+| Target | Use case |
+|--------|----------|
+| **Kind** (local) | Laptop dev — see [Local cluster (Kind)](#local-cluster-kind) |
+| **EKS / GKE / AKS** | Shared or production environments |
+| **Minikube** | Alternative local cluster (configure ingress separately) |
+| **Any CNCF-compliant cluster** | Ensure enough CPU/RAM for backbone + core + studio |
+
+**Rough capacity (full stack, in-cluster Postgres/Kafka/ES):** 10+ GB RAM and 4+ CPUs available to the cluster (Kind: allocate in Docker Desktop / Podman).
+
+This repo does **not** provision cloud accounts or managed Kubernetes — only Helm charts and Helmfile.
+
+---
+
+## Local cluster (Kind)
+
+For local development, create a cluster from the repo root:
+
+```bash
+# Install Kind: https://kind.sigs.k8s.io/docs/user/quick-start/#installation
+kind create cluster --config kind-cluster.yaml
 ```
 
-## Architecture
+`kind-cluster.yaml` defines cluster name `digit-studio`, maps **host ports 80/443** to the control plane (for ingress-nginx), and adds worker nodes with `node-role=workload`.
 
-```mermaid
-flowchart TB
-  root[digit-helmfile.yaml]
-  cc[cluster-configs]
-  bb[backbone-services]
-  core["core-services\n(+ egov-hrms)"]
-  studio["studio-services\n(+ health-individual\n+ health-service-request)"]
-  mon[monitoring]
+Confirm context:
 
-  root --> cc --> bb --> core --> studio --> mon
+```bash
+kubectl config use-context kind-digit-studio
+kubectl get nodes
 ```
 
-| Layer | Helmfile | Namespace (default) | Services |
-|-------|----------|----------------------|---------|
-| Cluster config | `clusterconfigs-helmfile.yaml` | `egov` | Namespaces, configmaps, secrets, RBAC, root ingress |
-| Backbone | `backboneservices-helmfile.yaml` | `backbone-dev` | postgres, kafka, redis, elasticsearch, minio, ingress-nginx, cert-manager |
-| Core | `coreservices-helmfile.yaml` | `core-dev` | 18 DIGIT core services + egov-hrms |
-| Studio | `studioservices-helmfile.yaml` | `studio-dev` | digit-studio, public-service, public-service-init, studio-individual, studio-pdf, studio-service-request, health-individual, health-service-request |
-| Monitoring | `monitoring-helmfile.yaml` | `monitoring` | prometheus, grafana, loki, blackbox-exporter |
+Then deploy with `HELMFILE_ENV=testing` (see [Quick start](#quick-start)). Use `global.setup: quickstart` in `testing.yaml` (no cert-manager).
 
-> Per-service namespaces are overridden in environment YAML (e.g. health-individual and health-service-request deploy to `egov` as defined in their `values.yaml`).
+**Tear down:**
 
-## Why cluster-configs is needed
+```bash
+kind delete cluster --name digit-studio
+```
 
-`cluster-configs` is the **foundation layer** — it must be applied before any other service. It creates:
+**Without Kubernetes:** use Docker Compose in `../egov-digit-studio/`.
 
-- **`egov-config` ConfigMap** — DB URL, Kafka brokers, Elasticsearch host, domain, timezone, and ~30 other platform parameters that every Java service reads at boot via env vars
-- **`egov-service-host` ConfigMap** — internal service URLs used by all services for inter-service calls
-- **Kubernetes Secrets** — DB credentials, mail/SMS keys, Elasticsearch creds, Kafka cluster ID, MinIO credentials; mounted by backbone and core services
-- **RBAC** — cluster roles and role bindings for the service accounts
-- **Namespaces** — if `cluster-configs.namespaces.create: true` in the env file
-- **Root Ingress** — entry-point Ingress rule pointing at your gateway/load balancer
-
-Without cluster-configs applied first, every service pod crashes immediately because the ConfigMaps and Secrets it mounts don't exist yet.
+---
 
 ## Quick start
 
-### Prerequisites
-
-- Kubernetes cluster with `kubectl` configured
-- [Helm](https://helm.sh/) v3+
-- [Helmfile](https://github.com/helmfile/helmfile)
-- [SOPS](https://github.com/getsops/sops) + AWS KMS access (for encrypted secrets)
-
-### 1. Configure environment
-
-Environment values live under `deploy-as-code/helm/environments/`:
-
-| File pair | Use case |
-|-----------|----------|
-| `unified-demo-studio.yaml` + `-secrets.yaml` | **Recommended** — full studio stack |
-| `unified-demo-staging.yaml` + `-secrets.yaml` | Staging with shared AWS RDS |
-| `unified-demo.yaml` + `-secrets.yaml` | Full unified-demo cloud instance |
-
-Edit the chosen `{env}.yaml` for your domain, DB host, and service host mappings.  
-Decrypt secrets before deploy (SOPS + AWS KMS):
-
 ```bash
-sops -d deploy-as-code/helm/environments/unified-demo-studio-secrets.yaml \
-  > deploy-as-code/helm/environments/unified-demo-studio-secrets-dec.yaml
+cd deploy-as-code/helm
+export HELMFILE_ENV=testing
+export COMMON_TAG=v2.9.2-4a60f20     # optional
+
+helmfile -f digit-helmfile.yaml apply --include-needs=true
 ```
 
-### 2. Deploy
-
 ```bash
-chmod +x deploy.sh run.sh
-
-# Full one-click deploy
-HELMFILE_ENV=unified-demo-studio ./deploy.sh apply
-
-# Preview diff before applying
-HELMFILE_ENV=unified-demo-studio ./deploy.sh diff
-
-# Render manifests to build.yaml
-./run.sh
+helmfile -f digit-helmfile.yaml diff
+helmfile -f digit-helmfile.yaml list
+helmfile -f digit-helmfile.yaml template
 ```
 
-### 3. Partial deploys — toggle layers
+Skip a layer: comment its path in `digit-helmfile.yaml` (monitoring is off by default).
 
-Comment/uncomment paths in `deploy-as-code/helm/digit-helmfile.yaml`:
+**Verify:**
+
+```bash
+kubectl get ns core backbone digit-studio monitoring
+kubectl get configmap -n core egov-config egov-service-host
+kubectl get secret -n core db
+```
+
+---
+
+## What `helmfile apply` does
+
+| # | Layer | Namespace | What gets created |
+|---|--------|-----------|-------------------|
+| 1 | **cluster-configs** | release in `core` | Namespaces, `egov-config` / `egov-service-host`, Secrets, RBAC, root ingress |
+| 2 | **backbone** | `backbone` | Postgres, Kafka, Redis, Elasticsearch, MinIO, ingress-nginx |
+| 3 | **core** | `core` | DIGIT core + egov-hrms |
+| 4 | **studio** | `digit-studio` | digit-studio, public-service, health services, … |
+| 5 | **monitoring** | `monitoring` | Prometheus, Grafana, Loki *(optional)* |
+
+**DNS examples** (`testing.yaml`):
+
+| Target | URL |
+|--------|-----|
+| Postgres | `postgres.backbone:5432` |
+| MDMS | `http://mdms-v2.core:8080/` |
+| Public service | `http://public-service.digit-studio:8080/` |
+
+---
+
+## Namespaces
+
+Created by the **cluster-configs** chart (not Helmfile directly):
+
+1. Template: `charts/cluster-configs/templates/namespaces.yaml`
+2. When `cluster-configs.namespaces.create: true`, emits one `Namespace` per entry in `cluster-configs.namespaces.values`
+3. Later layers deploy into those namespaces
 
 ```yaml
-helmfiles:
-  - path: ./charts/cluster-configs/clusterconfigs-helmfile.yaml   # always required
-  - path: ./charts/backbone-services/backboneservices-helmfile.yaml
-  - path: ./charts/core-services/coreservices-helmfile.yaml
-  - path: ./charts/studio-services/studioservices-helmfile.yaml
-  # - path: ./charts/monitoring/monitoring-helmfile.yaml           # skip monitoring
+# environments/<env>.yaml
+cluster-configs:
+  namespaces:
+    create: true
+    values:
+      - core
+      - backbone
+      - digit-studio
+      - monitoring
 ```
 
-### 4. Custom image tags
+---
+
+## Why cluster-configs is required
+
+| Resource | Names | Namespaces | Purpose |
+|----------|-------|------------|---------|
+| ConfigMap | `egov-config` | `core`, `digit-studio` | DB, Kafka, ES, domain, tenant IDs |
+| ConfigMap | `egov-service-host` | `core`, `digit-studio` | Inter-service HTTP URLs |
+| Secret | `db` | `core` | Postgres / Flyway credentials |
+| Secret | `minio`, `kafka-kraft` | `backbone` | Object store, Kafka cluster id |
+| Secret | `elasticsearch-master-creds` | `backbone`, `core` | Elasticsearch auth |
+
+Templates under `charts/cluster-configs/templates/` (`namespaces.yaml`, `configmaps/`, `secrets/`).
+
+---
+
+## Environment files
+
+| File | Role |
+|------|------|
+| `environments/<HELMFILE_ENV>.yaml` | Domain, namespaces, ConfigMaps, service URLs, replicas |
+| `environments/<HELMFILE_ENV>-secrets.yaml` | Passwords, keys (plaintext for `testing`; SOPS for cloud) |
 
 ```bash
-HELMFILE_ENV=unified-demo-studio \
-COMMON_TAG=v2.9.2-4a60f20 \
-HEALTH_INDIVIDUAL_TAG=Individual-master-register-studio-d307985 \
-HEALTH_SERVICE_REQUEST_TAG=multiarch-changes-digit-studio-3fd88be \
-./deploy.sh apply
+export HELMFILE_ENV=testing
 ```
 
-## Directory layout
+---
+
+## Layout
 
 ```
 egov-digit-studio-one-click-deployment/
-├── deploy.sh                          # One-click deploy script
-├── run.sh                             # Template-only (build.yaml)
-├── deploy-as-code/
-│   ├── README.md                      # Common chart documentation
-│   └── helm/
-│       ├── digit-helmfile.yaml        # ROOT orchestrator (5 layers)
-│       ├── .sops.yaml                 # SOPS KMS rules
-│       ├── environments/              # Per-env values + secrets
-│       └── charts/
-│           ├── common/                # Shared library chart
-│           ├── cluster-configs/       # Namespaces, configmaps, secrets, RBAC, ingress
-│           ├── backbone-services/     # Infra (postgres, kafka, redis, ES, minio, …)
-│           ├── core-services/         # DIGIT core microservices + egov-hrms
-│           ├── studio-services/       # digit-studio stack + health services
-│           └── monitoring/            # Prometheus, Grafana, Loki
+├── README.md
+├── kind-cluster.yaml
+└── deploy-as-code/helm/
+    ├── digit-helmfile.yaml
+    ├── environments/
+    │   ├── testing.yaml
+    │   └── testing-secrets.yaml
+    └── charts/
+        ├── cluster-configs/
+        ├── backbone-services/
+        ├── core-services/
+        ├── studio-services/
+        └── monitoring/
 ```
 
-## Known gaps
+---
 
-| Gap | Notes |
-|-----|-------|
-| **SOPS/KMS** | Secrets require AWS KMS key from `.sops.yaml`; decrypt before apply |
-| **External RDS** | Default env files point at shared AWS RDS; for greenfield point `db-host` at in-cluster `postgres.backbone-dev` |
-| **Gateway / digit-ui** | Studio UI served via `digit-studio` chart ingress directly; no separate gateway chart packaged |
-| **Cluster bootstrap** | No Terraform/kind/EKS setup; an existing cluster is assumed |
-| **CI/CD** | No GitHub Actions yet; mirror `digit_install.yml` from DIGIT-DevOps when ready |
+## Notes
 
-## Local development alternative
-
-For laptop development without Kubernetes, use the Compose stack in the sibling repo:
-
-```
-../egov-digit-studio/   → docker-compose + Tilt
-```
+| Topic | Detail |
+|-------|--------|
+| **External RDS** | Point `db-host` / `db-url` in `egov-config` at RDS instead of `postgres.backbone` |
+| **Namespace rename** | YAML changes do not migrate existing workloads |
+| **UI** | `digit-studio` chart ingress (no separate gateway chart) |

@@ -3,7 +3,7 @@ labels:
   app: "studio-service-request"
   group: "rainmaker"
 
-namespace: studio
+namespace: digit-studio
 # Ingress Configs
 ingress:
   namespace: studio

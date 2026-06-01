@@ -2,7 +2,7 @@ global:
   domain: "localhost"          # replace with real domain when deploying to a cluster
   setup: quickstart            # skips TLS/cert-manager; use "fullsetup" for cloud
   tracing-enabled: false
-  namespace: egov
+  namespace: core
   nodepool:
     nodeAffinity: false
     selector: ""
@@ -11,40 +11,39 @@ global:
 cluster-configs:
   secrets:
     db:
-      namespace: egov
+      namespace: core
       name: db
     egov-si-microservice:
-      namespace: egov
+      namespace: core
       name: egov-si-microservice
     egov-pg-service:
-      namespace: egov
+      namespace: core
       name: egov-pg-service
     egov-notification-mail:
-      namespace: egov
+      namespace: core
       name: egov-notification-mail
     egov-notification-sms:
-      namespace: egov
+      namespace: core
       name: egov-notification-sms
     elasticsearch-master-creds:
-      namespace: [backbone-dev, egov]
+      namespace: [backbone, core]
       name: elasticsearch-master-credentials
     minio:
-      namespace: backbone-dev
+      namespace: backbone
       name: minio
     kafka-kraft:
-      namespace: backbone-dev
+      namespace: backbone
       name: release-name-kafka-kraft-cluster-id
     git-sync:
-      namespace: egov
+      namespace: core
       name: git-creds
 
   namespaces:
     create: true               # kind/minikube: namespaces must be pre-created
     values:
-      - egov
-      - backbone-dev
-      - core-dev
-      - studio-dev
+      - core
+      - backbone
+      - digit-studio
       - monitoring
 
   networkpolicy:
@@ -52,14 +51,14 @@ cluster-configs:
 
   rbac:
     - role: user
-      namespaces: [ egov, core-dev, studio-dev ]
+      namespaces: [ core, digit-studio ]
     - role: admin
-      namespaces: [ egov, core-dev, studio-dev ]
+      namespaces: [ core, digit-studio ]
 
   root-ingress:
     cert-issuer: ""            # empty for quickstart; set "letsencrypt-prod" for fullsetup
     name: root-ingress
-    namespace: egov
+    namespace: core
     appRoot: ""
     serviceName: ingress-nginx-controller
     servicePort: 80
@@ -68,23 +67,22 @@ cluster-configs:
     egov-config:
       name: egov-config
       namespace:
-        - egov
-        - core-dev
-        - studio-dev
+        - core
+        - digit-studio
       data:
         # ── Database (in-cluster postgres deployed by backbone-services) ──────────────
-        db-host: "postgres.backbone-dev"
+        db-host: "postgres.backbone"
         db-name: "egov_db"
-        db-url: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db?currentSchema=public"
-        db-url-works: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db"
-        bpa-db-url: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db"
-        erp-db-url: "jdbc:postgresql://postgres.backbone-dev:5432/egov_db"
-        # ── Infrastructure (backbone-dev namespace) ───────────────────────────────────
-        es-host: "elasticsearch-data.backbone-dev"
-        es-indexer-host: "http://elasticsearch-data.backbone-dev:9200/"
-        es-infra-host: "elasticsearch-data.backbone-dev"
-        kafka-brokers: "kafka-kraft-controller-headless.backbone-dev:9092"
-        kafka-infra-brokers: "kafka-kraft-controller-headless.backbone-dev:9092"
+        db-url: "jdbc:postgresql://postgres.backbone:5432/egov_db?currentSchema=public"
+        db-url-works: "jdbc:postgresql://postgres.backbone:5432/egov_db"
+        bpa-db-url: "jdbc:postgresql://postgres.backbone:5432/egov_db"
+        erp-db-url: "jdbc:postgresql://postgres.backbone:5432/egov_db"
+        # ── Infrastructure (backbone namespace) ───────────────────────────────────
+        es-host: "elasticsearch-data.backbone"
+        es-indexer-host: "http://elasticsearch-data.backbone:9200/"
+        es-infra-host: "elasticsearch-data.backbone"
+        kafka-brokers: "kafka-kraft-controller-headless.backbone:9092"
+        kafka-infra-brokers: "kafka-kraft-controller-headless.backbone:9092"
         # ── Platform ──────────────────────────────────────────────────────────────────
         domain: "localhost"
         egov-services-fqdn-name: "http://localhost/"
@@ -117,70 +115,69 @@ cluster-configs:
     egov-service-host:
       name: egov-service-host
       namespace:
-        - egov
-        - core-dev
-        - studio-dev
+        - core
+        - digit-studio
       data:
-        # ── Core services (core-dev namespace) ───────────────────────────────────────
-        egov-accesscontrol: "http://egov-accesscontrol.core-dev:8080/"
-        egov-enc-service: "http://egov-enc-service.core-dev:8080/"
-        egov-user: "http://egov-user.core-dev:8080/"
-        egov-user-egov: "http://egov-user.core-dev:8080/"
-        egov-location: "http://egov-location.core-dev:8080/"
-        egov-filestore: "http://egov-filestore.core-dev:8080/"
-        egov-localization: "http://egov-localization.core-dev:8080/"
-        egov-idgen: "http://egov-idgen.core-dev:8080/"
-        egov-otp: "http://egov-otp.core-dev:8080/"
-        egov-mdms-service: "http://egov-mdms-service.core-dev:8080/"
-        mdms-v2: "http://mdms-v2.core-dev:8080/"
-        egov-mdms-service-v2: "http://mdms-v2.core-dev:8080/"
-        mdms-service-v2: "http://mdms-v2.core-dev:8080/"
-        egov-workflow-v2: "http://egov-workflow-v2.core-dev:8080/"
-        egov-workflow: "http://egov-workflow-v2.core-dev:8080/"
-        egov-searcher: "http://egov-searcher.core-dev:8080/"
-        egov-indexer: "http://egov-indexer.core-dev:8080/"
-        egov-persister: "http://egov-persister.core-dev:8080/"
-        egov-notification-sms: "http://egov-notification-sms.core-dev:8080/"
-        egov-url-shortening: "http://egov-url-shortening.core-dev:8080/"
-        egov-hrms: "http://egov-hrms.core-dev:8080/"
-        boundary-service: "http://boundary-service.core-dev:8080/"
-        egov-boundary: "http://boundary-service.core-dev:8080/"
-        pdf-service: "http://pdf-service.core-dev:8080/"
-        egov-pdf: "http://pdf-service.core-dev:8080/"
-        user-otp: "http://user-otp.core-dev:8080/"
-        inbox: "http://inbox.core-dev:8080/"
-        # ── Studio services (studio-dev namespace) ───────────────────────────────────
-        public-service: "http://public-service.studio-dev:8080/"
-        public-service-init: "http://public-service-init.studio-dev:8080/"
-        studio-individual: "http://studio-individual.studio-dev:8080/"
-        studio-service-request: "http://studio-service-request.studio-dev:8080/"
-        health-individual: "http://health-individual.studio-dev:8080/"
-        health-service-request: "http://health-service-request.studio-dev:8080/"
-        # ── Backbone services (backbone-dev namespace) ───────────────────────────────
-        minio-url: "http://minio.backbone-dev:9000/"
-        gateway: "http://ingress-nginx-controller.backbone-dev:80/"
+        # ── Core services (core namespace) ───────────────────────────────────────
+        egov-accesscontrol: "http://egov-accesscontrol.core:8080/"
+        egov-enc-service: "http://egov-enc-service.core:8080/"
+        egov-user: "http://egov-user.core:8080/"
+        egov-user-egov: "http://egov-user.core:8080/"
+        egov-location: "http://egov-location.core:8080/"
+        egov-filestore: "http://egov-filestore.core:8080/"
+        egov-localization: "http://egov-localization.core:8080/"
+        egov-idgen: "http://egov-idgen.core:8080/"
+        egov-otp: "http://egov-otp.core:8080/"
+        egov-mdms-service: "http://egov-mdms-service.core:8080/"
+        mdms-v2: "http://mdms-v2.core:8080/"
+        egov-mdms-service-v2: "http://mdms-v2.core:8080/"
+        mdms-service-v2: "http://mdms-v2.core:8080/"
+        egov-workflow-v2: "http://egov-workflow-v2.core:8080/"
+        egov-workflow: "http://egov-workflow-v2.core:8080/"
+        egov-searcher: "http://egov-searcher.core:8080/"
+        egov-indexer: "http://egov-indexer.core:8080/"
+        egov-persister: "http://egov-persister.core:8080/"
+        egov-notification-sms: "http://egov-notification-sms.core:8080/"
+        egov-url-shortening: "http://egov-url-shortening.core:8080/"
+        egov-hrms: "http://egov-hrms.core:8080/"
+        boundary-service: "http://boundary-service.core:8080/"
+        egov-boundary: "http://boundary-service.core:8080/"
+        pdf-service: "http://pdf-service.core:8080/"
+        egov-pdf: "http://pdf-service.core:8080/"
+        user-otp: "http://user-otp.core:8080/"
+        inbox: "http://inbox.core:8080/"
+        # ── Studio services (digit-studio namespace) ───────────────────────────────────
+        public-service: "http://public-service.digit-studio:8080/"
+        public-service-init: "http://public-service-init.digit-studio:8080/"
+        studio-individual: "http://studio-individual.digit-studio:8080/"
+        studio-service-request: "http://studio-service-request.digit-studio:8080/"
+        health-individual: "http://health-individual.digit-studio:8080/"
+        health-service-request: "http://health-service-request.digit-studio:8080/"
+        # ── Backbone services (backbone namespace) ───────────────────────────────
+        minio-url: "http://minio.backbone:9000/"
+        gateway: "http://ingress-nginx-controller.backbone:80/"
         # ── Unused in testing but kept for reference ──────────────────────────────────
-        internal-gateway-scg: "http://internal-gateway-scg.egov:8080/"
-        billing-service: "http://billing-service.egov:8080/"
-        collection-services: "http://collection-services.egov:8080/"
-        egov-common-masters: "http://internal-gateway-scg.egov:8080/"
-        pt-services-v2: "http://pt-services-v2.egov:8080/"
-        property-services: "http://property-services.egov:8080/"
-        tl-services: "http://tl-services.egov:8080/"
-        vehicle: "http://vehicle.egov:8080/"
-        fsm: "http://fsm.egov:8080/"
-        individual: "http://individual.egov:8080/"
-        household: "http://household.egov:8080/"
-        audit-service: "http://audit-service.egov:8080/"
-        bulk-upload: "http://bulk-upload.egov:8080/"
-        pqm-service: "http://pqm-service.egov:8080"
-        bpa-services: "http://bpa-services.egov:8080/"
-        egov-edcr: "http://egov-edcr.egov:8080/"
-        ws-services: "http://ws-services.egov:8080/"
-        sw-services: "http://sw-services.egov:8080/"
+        internal-gateway-scg: "http://internal-gateway-scg.core:8080/"
+        billing-service: "http://billing-service.core:8080/"
+        collection-services: "http://collection-services.core:8080/"
+        egov-common-masters: "http://internal-gateway-scg.core:8080/"
+        pt-services-v2: "http://pt-services-v2.core:8080/"
+        property-services: "http://property-services.core:8080/"
+        tl-services: "http://tl-services.core:8080/"
+        vehicle: "http://vehicle.core:8080/"
+        fsm: "http://fsm.core:8080/"
+        individual: "http://individual.core:8080/"
+        household: "http://household.core:8080/"
+        audit-service: "http://audit-service.core:8080/"
+        bulk-upload: "http://bulk-upload.core:8080/"
+        pqm-service: "http://pqm-service.core:8080"
+        bpa-services: "http://bpa-services.core:8080/"
+        egov-edcr: "http://egov-edcr.core:8080/"
+        ws-services: "http://ws-services.core:8080/"
+        sw-services: "http://sw-services.core:8080/"
 
         jmx-exporter-config:
-          namespace: [ egov, core-dev, studio-dev ]
+          namespace: [ core, digit-studio ]
 
 # ── Per-service overrides ──────────────────────────────────────────────────────────────
 
@@ -192,7 +189,7 @@ public-service:
   mdms-search-v2-endpoint: "mdms-v2/v2"
   mdms-v2-search-endpoint: "mdms-v2/v2/_search"
   mdms-v2-create-endpoint: "mdms-v2/v2/_create"
-  mdms-service-host: "http://mdms-v2.core-dev:8080/"
+  mdms-service-host: "http://mdms-v2.core:8080/"
   mdms-v2-update-endpoint: "mdms-v2/v2/_update"
 
 public-service-init:
@@ -203,7 +200,7 @@ public-service-init:
   mdms-search-v2-endpoint: "mdms-v2/v2"
   mdms-v2-search-endpoint: "mdms-v2/v2/_search"
   mdms-v2-create-endpoint: "mdms-v2/v2/_create"
-  mdms-service-host: "http://mdms-v2.core-dev:8080/"
+  mdms-service-host: "http://mdms-v2.core:8080/"
   mdms-v2-update-endpoint: "mdms-v2/v2/_update"
 
 egov-pg-service:
@@ -225,7 +222,7 @@ egov-workflow-v2:
   wf-max-limit: "1000"
 
 digit-studio:
-  namespace: studio-dev
+  namespace: digit-studio
   custom-js-injection: |
     sub_filter.conf: "
       sub_filter  '<head>' '<head>';"
