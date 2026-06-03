@@ -36,7 +36,7 @@ cluster-configs:
 
   secrets:
     db: 
-      namespace: core
+      namespace: [ core, backbone ]
       name: db
 
     egov-notification-sms:
@@ -78,9 +78,8 @@ cluster-configs:
       name: kibana-infra-creds     
 
     pgadmin: 
-      namespace: playground
+      namespace: backbone
       name: pgadmin
-
   
     minio:
       namespace: backbone
@@ -89,10 +88,6 @@ cluster-configs:
     alertmanager:
       namespace: monitoring
       name: alertmanager-main      
-
-    jenkins:
-      namespace: jenkins
-      name: jenkins
 
     postgres:
       namespace: jenkins

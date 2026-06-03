@@ -3,11 +3,13 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pvc-postgres
-  namespace: monitoring
+  namespace: {{ .Release.Namespace }}
   labels:
     type: local
 spec: 
-  storageClassName: manual
+  # Static binding (quickstart): avoid dynamic provisioning / StorageClass dependency.
+  storageClassName: ""
+  volumeName: pv-postgres
   accessModes:
     - ReadWriteOnce
   resources:

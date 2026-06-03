@@ -2,7 +2,6 @@ global:
   domain: "localhost"          # replace with real domain when deploying to a cluster
   setup: quickstart            # skips TLS/cert-manager; use "fullsetup" for cloud
   tracing-enabled: false
-  namespace: core
   nodepool:
     nodeAffinity: false
     selector: ""
@@ -11,7 +10,7 @@ global:
 cluster-configs:
   secrets:
     db:
-      namespace: core
+      namespace: [core, backbone]
       name: db
     egov-si-microservice:
       namespace: core
@@ -227,7 +226,24 @@ digit-studio:
     sub_filter.conf: "
       sub_filter  '<head>' '<head>';"
 
-# Moved from backboneservices-helmfile.yaml.gotmpl set: blocks
+# Backbone services value overrides
+kafka-kraft:
+  controller:
+    replicaCount: 1
+
+
+elasticsearch-master:
+  replicas: 1
+
+
+elasticsearch-data:
+  replicas: 1
+
+
+minio:
+  replicas: 4 # cannot be less than 4 and must be even
+
+
 kibana:
   ingress:
     hostName: "localhost"
@@ -236,6 +252,15 @@ kibana:
           - localhost
         secretName: localhost-tls-certs
     context: kibana
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
 
 jupyterhub:
   ingress:
@@ -247,10 +272,19 @@ jupyterhub:
         secretName: localhost-tls-certs
     pathType: Prefix
 
+
+playground:
+  resources: |
+    requests:
+      memory: 256Mi
+      cpu: "125m"
+
+
 pgadmin4:
   ingress:
     context: pgadmin4
     pathType: Prefix
+
 
 ingress-nginx:
   domain: "localhost"

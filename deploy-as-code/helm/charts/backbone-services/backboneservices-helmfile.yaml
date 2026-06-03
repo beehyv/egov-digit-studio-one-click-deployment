@@ -34,7 +34,7 @@ releases:
     installed: true
     <<: *default
 
-  - name: elasticsearch
+  - name: elasticsearch-master
     chart: ./elasticsearch-master
     version: 8.11.3
     installed: true
