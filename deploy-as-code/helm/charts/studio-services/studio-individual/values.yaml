@@ -7,7 +7,7 @@ namespace: digit-studio
 
 # Ingress Configs
 ingress:
-  namespace: studio
+  namespace: digit-studio
   enabled: true
   zuul: true
   context: "studio-individual"

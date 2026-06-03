@@ -78,7 +78,7 @@ kind delete cluster --name digit-studio
 ```bash
 cd deploy-as-code/helm
 export HELMFILE_ENV=testing
-export COMMON_TAG=v2.9.2-4a60f20     # optional
+# Edit environments/testing.yaml → images.defaultTag (and images.overrides if needed)
 
 helmfile -f digit-helmfile.yaml apply --include-needs=true
 ```
@@ -168,6 +168,29 @@ Templates under `charts/cluster-configs/templates/` (`namespaces.yaml`, `configm
 export HELMFILE_ENV=testing
 ```
 
+### Image tags (core + digit-studio)
+
+Single control point in `<env>.yaml`. Charts using the **common** library resolve the tag in this order:
+
+1. `image.tag` on the chart (or under a per-service block, e.g. `egov-user.image.tag`)
+2. `images.overrides.<chart-name>` (`egov-user`, `digit-studio`, `health-individual`, …)
+3. `images.defaultTag`
+4. `global.image.tag` (fallback)
+
+```yaml
+images:
+  registry: egovio
+  defaultTag: v2.9.2-4a60f20
+  overrides:
+    health-individual: Individual-master-register-studio-d307985
+```
+
+Flyway init images (`egov-user-db`, etc.) use the **same tag** as the parent service.
+
+### Root ingress
+
+`cluster-configs.root-ingress` routes `http(s)://<domain>/` to the **digit-studio** Service in **digit-studio** (`appRoot: digit-studio` → `/digit-studio/`). Ingress must live in the **same namespace** as that Service.
+
 ---
 
 ## Layout
@@ -195,6 +218,7 @@ egov-digit-studio-one-click-deployment/
 
 | Topic | Detail |
 |-------|--------|
+| **Four namespaces** | Only `core`, `backbone`, `digit-studio`, `monitoring` are created; pgadmin/playground/cert-manager run in `backbone` |
 | **External RDS** | Point `db-host` / `db-url` in `egov-config` at RDS instead of `postgres.backbone` |
 | **Namespace rename** | YAML changes do not migrate existing workloads |
 | **UI** | `digit-studio` chart ingress (no separate gateway chart) |

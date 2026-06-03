@@ -1,7 +1,6 @@
 templates:
   default: &default
     version: 0.1.0
-    namespace: core
     # Valid values for missingFileHandler: "Error", "Warn", "Info", "Debug". Default is "Error".
     missingFileHandler: Warn
     values:

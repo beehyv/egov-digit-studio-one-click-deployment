@@ -12,9 +12,6 @@ cluster-configs:
     db:
       namespace: [core, backbone]
       name: db
-    egov-si-microservice:
-      namespace: core
-      name: egov-si-microservice
     egov-pg-service:
       namespace: core
       name: egov-pg-service
@@ -57,9 +54,9 @@ cluster-configs:
   root-ingress:
     cert-issuer: ""            # empty for quickstart; set "letsencrypt-prod" for fullsetup
     name: root-ingress
-    namespace: core
-    appRoot: ""
-    serviceName: ingress-nginx-controller
+    namespace: digit-studio    # same namespace as digit-studio Service (Ingress backend rule)
+    appRoot: digit-studio      # redirect / → /digit-studio/
+    serviceName: digit-studio
     servicePort: 80
 
   configmaps:
@@ -74,8 +71,6 @@ cluster-configs:
         db-name: "egov_db"
         db-url: "jdbc:postgresql://postgres.backbone:5432/egov_db?currentSchema=public"
         db-url-works: "jdbc:postgresql://postgres.backbone:5432/egov_db"
-        bpa-db-url: "jdbc:postgresql://postgres.backbone:5432/egov_db"
-        erp-db-url: "jdbc:postgresql://postgres.backbone:5432/egov_db"
         # ── Infrastructure (backbone namespace) ───────────────────────────────────
         es-host: "elasticsearch-data.backbone"
         es-indexer-host: "http://elasticsearch-data.backbone:9200/"
@@ -105,8 +100,6 @@ cluster-configs:
         egov-state-level-tenant-id: "pg"
         state-level-tenant-id: "pg"
         central-level-tenant: "pg"
-        egov-bnd-freedownload-tenants: "pg.testing"
-        egov-bnd-live-citizen-tenants: "pg.testing"
         egov-internal-microservice-user-uuid: "e1f57dfe-35a0-494a-911d-22cd3f786612"
         care-db-name: "care_db"
         care-db-port: "5432"
@@ -160,20 +153,9 @@ cluster-configs:
         billing-service: "http://billing-service.core:8080/"
         collection-services: "http://collection-services.core:8080/"
         egov-common-masters: "http://internal-gateway-scg.core:8080/"
-        pt-services-v2: "http://pt-services-v2.core:8080/"
-        property-services: "http://property-services.core:8080/"
-        tl-services: "http://tl-services.core:8080/"
-        vehicle: "http://vehicle.core:8080/"
-        fsm: "http://fsm.core:8080/"
         individual: "http://individual.core:8080/"
         household: "http://household.core:8080/"
         audit-service: "http://audit-service.core:8080/"
-        bulk-upload: "http://bulk-upload.core:8080/"
-        pqm-service: "http://pqm-service.core:8080"
-        bpa-services: "http://bpa-services.core:8080/"
-        egov-edcr: "http://egov-edcr.core:8080/"
-        ws-services: "http://ws-services.core:8080/"
-        sw-services: "http://sw-services.core:8080/"
 
         jmx-exporter-config:
           namespace: [ core, digit-studio ]

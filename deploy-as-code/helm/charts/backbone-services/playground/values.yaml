@@ -1,4 +1,4 @@
-namespace: playground 
+namespace: backbone
 
 # Common Labels
 labels:
@@ -16,7 +16,6 @@ replicas: "1"
 persistence:
   enabled: true
   dataDirSize: "20Gi"
-  storageClassName: gp3
   accessMode: ReadWriteOnce
   volumeMode: Filesystem
 

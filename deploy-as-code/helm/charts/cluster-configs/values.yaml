@@ -7,10 +7,10 @@ cluster-configs:
 
   root-ingress:
     name: root-ingress
-    namespace: core
+    namespace: digit-studio
     cert-issuer: "letsencrypt-prod"
-    appRoot: citizen
-    serviceName: citizen
+    appRoot: digit-studio
+    serviceName: digit-studio
     servicePort: 80
 
   nginx-errors:
@@ -89,8 +89,12 @@ cluster-configs:
       namespace: monitoring
       name: alertmanager-main      
 
+    jenkins:
+      namespace: backbone
+      name: jenkins
+
     postgres:
-      namespace: jenkins
+      namespace: backbone
       name: postgres
 
     elasticsearch-master-creds:
