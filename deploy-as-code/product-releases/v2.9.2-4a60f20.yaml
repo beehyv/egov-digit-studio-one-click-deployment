@@ -1,0 +1,52 @@
+version: v2.9.2-4a60f20
+modules:
+  - name: backbone
+    services:
+      - cert-manager
+      - elasticsearch-data
+      - elasticsearch-master
+      - ingress-nginx
+      - kafka-kraft
+      - kibana
+      - minio
+      - pgadmin4
+      - playground
+      - postgres
+      - redis
+
+  - name: core
+    dependencies:
+      - backbone
+    services:
+        boundary-service: v2.9.2-4a60f20
+        egov-accesscontrol: v2.9.2-4a60f20
+        egov-enc-service: v2.9.2-4a60f20
+        egov-filestore: v2.9.2-4a60f20
+        egov-idgen: v2.9.2-4a60f20
+        egov-indexer: latest
+        egov-localization: v2.9.2-4a60f20
+        egov-mdms-service: alpine
+        egov-notification-sms: sandbox-d760d6b
+        egov-otp: master-1e8d2bb
+        egov-persister: v2.9.2-4a60f20
+        egov-url-shortening: v2.9.2-4a60f20
+        egov-user: sandbox-log-f4a87d0
+        egov-workflow-v2: v2.9.2-4a60f20
+        inbox: inbox-parallel-workflow-b5cd4a6
+        mdms-v2: master-1e8d2bb
+        pdf-service: multiarch-master-99a308d
+        user-otp: sandbox-log-86902f9
+        egov-hrms: hrms-boundary-individual-61e6097
+
+  - name: digit-studio
+    dependencies:
+      - backbone
+    services:
+        digit-studio: studio-e60896a-833
+        public-service: develop-4351bc1
+        public-service-init: develop-e42fed4
+        studio-individual: latest
+        studio-pdf: develop-16d12f1
+        studio-service-request: latest
+        health-individual: Individual-master-register-studio-d307985
+        health-service-request: multiarch-changes-digit-studio-3fd88be
