@@ -32,28 +32,21 @@ jobs:
 
       - name: Decrypt secrets
         working-directory: ./deploy-as-code/helm
-        run: |
-          aws sts get-caller-identity
-          sops --decrypt --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/testing-secrets.yaml > env-secrets1.yaml
-          cp env-secrets1.yaml ./environments/testing-secrets.yaml
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: "latest"
+        run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/testing-secrets.yaml
 
       - name: Install Helmfile
-        uses: helmfile/helmfile-action@v1.9.0
+        uses: helmfile/helmfile-action@v2.2.0
         with:
+          helm-version: 'v3.11.0'
           helmfile-version: "v0.150.0"
-          helm-plugins: https://github.com/databus23/helm-diff
-      
+          helm-plugins: https://github.com/databus23/helm-diff@v3.1.3
+
       - name: Parse YAML and export as environment variables
-        id: set-env
+        working-directory: ./deploy-as-code/product-releases
         run: |
           services=$(yq e '.modules[]
             | select(.name == "core" or .name == "digit-studio")
-            | .services' ./deploy-as-code/product-releases/v2.9.2-4a60f20.yaml)
+            | .services' ./v2.9.2.yaml)
           echo "$services" | sed "s/: /=/g" >> $GITHUB_ENV
 
       - name: Digit deployment

@@ -1,4 +1,5 @@
-version: v2.9.2-4a60f20
+version: v2.9.2
+
 modules:
   - name: backbone
     services:
@@ -41,6 +42,7 @@ modules:
   - name: digit-studio
     dependencies:
       - backbone
+      - core
     services:
         digit-studio: studio-e60896a-833
         public-service: develop-4351bc1
