@@ -39,7 +39,7 @@ func main() {
 	replaceInFile("../../../deploy-as-code/helm/environments/env-secrets.yaml", data, true)
 	fmt.Println("env secrets yaml file updated successfully!")
 
-	replaceInFile("../../../../configs/assets/globalConfigs.js", data, true)
+	replaceInFile("../../../configs/assets/globalConfigs.js", data, true)
 	fmt.Println("env secrets yaml file updated successfully!")
 }
 
