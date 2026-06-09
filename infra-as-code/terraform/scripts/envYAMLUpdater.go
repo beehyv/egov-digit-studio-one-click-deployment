@@ -50,7 +50,7 @@ func main() {
 		os.Exit(1)
 	}
 	// Read the YAML file
-	yamlBytes, err := ioutil.ReadFile("../../../deploy-as-code/helm/environments/env.yaml")
+	yamlBytes, err := ioutil.ReadFile("../../../deploy-as-code/charts/environments/env.yaml")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading YAML file: %v\n", err)
 		os.Exit(1)
