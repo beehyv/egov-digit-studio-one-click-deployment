@@ -107,6 +107,10 @@ releases:
     installed: true
     <<: *default
 
+  - name: configmaps
+    installed: true
+    <<: *default
+
 ### Studio-Services ###
 
   - name: digit-studio

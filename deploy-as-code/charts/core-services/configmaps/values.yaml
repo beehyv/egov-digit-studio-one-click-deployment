@@ -178,36 +178,12 @@ secrets:
   egov-notification-mail:
     name: egov-notification-mail
     namespace: egov
-  oauth2-proxy:
-    name: oauth2-proxy
-    namespace: egov
   elasticsearch:
     name: elasticsearch-credentials
-    namespace: egov
-  egov-pg-service:
-    name: egov-pg-service
     namespace: egov
   alertmanager:
     namespace: monitoring
     name: alertmanager-main
-  egov-si-microservice:
-    namespace: egov
-    name: egov-si-microservice
-  egov-edcr-notification:
-    namespace: egov
-    name: egov-edcr-notification
-  egov-edcr-bank-gateway:
-    namespace: egov
-    name: egov-edcr-bank-gateway
-  chatbot:
-    namespace: egov
-    name: chatbot
-  covid-chatbot:
-    namespace: egov
-    name: covid-chatbot
-  egov-user-chatbot:
-    namespace: egov
-    name: egov-user-chatbot
   egov-hrms:
     name: egov-hrms
     namespace: egov

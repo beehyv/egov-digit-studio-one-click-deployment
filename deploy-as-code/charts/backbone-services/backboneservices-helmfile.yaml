@@ -17,7 +17,7 @@ templates:
 releases:
 - name: cert-manager
   chart: ./cert-manager
-  namespace: egov
+  namespace: core
   installed: true
   version: v1.13.3
   disableValidation: true
@@ -34,18 +34,18 @@ releases:
     - ./minio/values.yaml
     - {{ .Values | toYaml | nindent 8 }}
 
-- name: postgresql
-  installed: false
-  chart: ./postgresql
-  version: 11.9.13
-  <<: *default
-  values:
-    - ./postgresql/values.yaml
-    - {{ .Values | toYaml | nindent 8 }}
-    - global:
-        postgresql:
-          auth:
-            postgresPassword: {{ .Values.secrets.db.password | quote }}
+#- name: postgresql
+#  installed: false
+#  chart: ./postgresql
+#  version: 11.9.13
+#  <<: *default
+#  values:
+#    - ./postgresql/values.yaml
+#    - {{ .Values | toYaml | nindent 8 }}
+#    - global:
+#        postgresql:
+#          auth:
+#            postgresPassword: {{ .Values.secrets.db.password | quote }}
 
 - name: redis
   installed: true
