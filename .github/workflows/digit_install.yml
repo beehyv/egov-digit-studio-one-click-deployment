@@ -139,7 +139,7 @@ jobs:
       - name: Terraform Apply - remotestate
         id: apply
         run: terraform apply -no-color -input=false -auto-approve
-#        continue-on-error: true
+        continue-on-error: true
         working-directory: infra-as-code/terraform/sample-aws/remote-state
       - name: Terraform init - Infra creation
         id: init-Infra
@@ -160,7 +160,7 @@ jobs:
       - name: Terraform Apply - Infra creation
         id: apply-Infra
         run: terraform apply -no-color -input=false -auto-approve -var db_password=$db_password
-#        continue-on-error: true
+        continue-on-error: true
         working-directory: infra-as-code/terraform/sample-aws
       - name: Install AWS IAM Authenticator
         run: |
