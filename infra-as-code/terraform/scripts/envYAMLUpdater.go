@@ -67,7 +67,7 @@ func main() {
 	// Write the updated YAML to stdout
 	fmt.Println(output)
 
-	err = ioutil.WriteFile("../../../deploy-as-code/helm/environments/env.yaml", []byte(output), 0644)
+	err = ioutil.WriteFile("../../../deploy-as-code/charts/environments/env.yaml", []byte(output), 0644)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing YAML file: %v\n", err)
 		os.Exit(1)
