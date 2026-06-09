@@ -83,12 +83,12 @@ variable "max_worker_nodes" {
 
 variable "db_name" {
   description = "RDS DB name. Make sure there are no hyphens or other special characters in the DB name. Else, DB creation will fail"
-  default = studiooneclickdb #REPLACE
+  default = "studiooneclickdb" #REPLACE
 }
 
 variable "db_username" {
   description = "RDS database user name"
-  default = studiooneclick #REPLACE
+  default = "studiooneclick" #REPLACE
 }
 
 variable "filestore_namespace" {
