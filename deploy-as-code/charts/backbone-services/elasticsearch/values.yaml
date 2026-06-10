@@ -83,9 +83,9 @@ esJavaOpts: "-Xmx2100m -Xms2100m"
 
 resources:
   requests:
-    memory: "3Gi"
+    memory: "2Gi"
   limits:
-    memory: "4Gi"
+    memory: "3Gi"
 
 initResources: {}
   # limits:
