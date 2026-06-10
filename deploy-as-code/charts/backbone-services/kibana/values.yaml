@@ -12,6 +12,9 @@ replicas: 1
 extraEnvs:
   - name: "NODE_OPTIONS"
     value: "--max-old-space-size=1800"
+  - name: SERVER_MAXPAYLOAD
+    value: "52428800"
+
 #  - name: MY_ENVIRONMENT_VAR
 #    value: the_value_goes_here
 
@@ -51,11 +54,10 @@ podAnnotations: {}
 
 resources:
   requests:
-    cpu: "1000m"
     memory: "2Gi"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+    cpu: "100m"
+    memory: "1Gi"
 
 protocol: http
 
@@ -143,7 +145,6 @@ ingress:
   # kubernetes.io/ingress.class: nginx
   # kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt-prod
     # nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
     # nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
     nginx.ingress.kubernetes.io/limit-rpm: "1200"
@@ -153,6 +154,7 @@ ingress:
     nginx.ingress.kubernetes.io/lua-resty-waf-process-multipart-body: "false"
     nginx.ingress.kubernetes.io/lua-resty-waf-score-threshold: "10"
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
   hosts:
     - host: demo.digit.org
       paths:

@@ -18,7 +18,7 @@ masterService: "elasticsearch-master"
 # These will be set as environment variables. E.g. node.master=true
 roles:
   - master
-minimumMasterNodes: 2
+minimumMasterNodes: 3
 
 esMajorVersion: ""
 
@@ -79,13 +79,13 @@ podAnnotations: {}
 # additionals labels
 labels: {}
 
-esJavaOpts: "-Xmx448m -Xms448m"
+esJavaOpts: "-Xmx2100m -Xms2100m"
 
 resources:
   requests:
-    memory: "896Mi"
+    memory: "3Gi"
   limits:
-    memory: "896Mi"  
+    memory: "4Gi"
 
 initResources: {}
   # limits:

@@ -1,6 +1,6 @@
 
 name: elasticsearch-data
-replicas: 3
+replicas: 2
 
 image:
   pullPolicy: IfNotPresent  
@@ -102,15 +102,15 @@ podAnnotations: {}
 # additionals labels
 labels: {}
 
-esJavaOpts: "-Xmx1g -Xms1g"
+esJavaOpts: "-Xmx2800m -Xms2800m"
 
 resources:
   requests:
     # cpu: "1000m"
-    memory: "2Gi"
+    memory: "5Gi"
   limits:
     # cpu: "1000m"
-    memory: "2Gi"
+    memory: "4Gi"
 
 initResources: {}
   # limits:
