@@ -1,7 +1,7 @@
 configmaps:
   egov-config:
     name: egov-config
-    namespace: egov
+    namespace: core
     data:
       db-host: "postgresql.backbone:5432" ## Add db-host name eg: egov-demo.database.azure.com
       db-name: "postgres" ## Add db-name
@@ -30,7 +30,7 @@ configmaps:
       egov-bnd-live-citizen-tenants: "pg.testing"
   egov-service-host:
     name: egov-service-host
-    namespace: egov
+    namespace: core
     data:
       asset-services: "http://asset-services:8080/"
       asset-services-maha: "http://asset-services-maha:8080/"
@@ -143,47 +143,50 @@ configmaps:
       health-project: 'http://health-project.health:8080/'
       health-individual: 'http://health-individual.health:8080/'
 
+
 root-ingress:
   name: root-ingress
-  namespace: egov
+  namespace: core
   cert-issuer: "letsencrypt-staging"
   appRoot: digit-ui
   serviceName: digit-ui
   servicePort: 80
+
+
 secrets:
   db:
     name: db
-    namespace: egov
+    namespace: core
   git-sync:
     name: git-creds
-    namespace: egov
+    namespace: core
   minio:
-    namespace: backbone
     name: minio
+    namespace: backbone
   pgadmin:
     name: pgadmin
     namespace: backbone
   egov-filestore:
     name: egov-filestore
-    namespace: egov
+    namespace: core
   egov-location:
     name: egov-location
-    namespace: egov
+    namespace: core
   egov-enc-service:
     name: egov-enc-service
-    namespace: egov
+    namespace: core
   egov-notification-sms:
     name: egov-notification-sms
-    namespace: egov
+    namespace: core
   egov-notification-mail:
     name: egov-notification-mail
-    namespace: egov
+    namespace: core
   elasticsearch:
-    name: elasticsearch-credentials
-    namespace: egov
+    name: elasticsearch-master-credentials
+    namespace: core
   alertmanager:
-    namespace: monitoring
     name: alertmanager-main
+    namespace: monitoring
   egov-hrms:
     name: egov-hrms
-    namespace: egov
+    namespace: core

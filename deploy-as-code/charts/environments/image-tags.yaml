@@ -1,0 +1,119 @@
+boundary-service:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-accesscontrol:
+  image:
+    tag: v2.9.2-4a60f20
+
+egov-enc-service:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-filestore:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-idgen:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-indexer:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-localization:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-mdms-service:
+  image:
+    tag: v2.9.2-4a60f20
+
+egov-notification-sms:
+  image:
+    tag: sandbox-d760d6b
+
+egov-otp:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-persister:
+  image:
+    tag: v2.9.2-4a60f20
+
+egov-url-shortening:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+egov-user:
+  image:
+    tag: sandbox-log-f4a87d0
+
+egov-workflow-v2:
+  image:
+    tag: v2.9.2-4a60f20
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+inbox:
+  image:
+    tag: inbox-parallel-workflow-b5cd4a6
+
+mdms-v2:
+  image:
+    tag: master-1e8d2bb
+  initContainers:
+    dbMigration:
+      image:
+        tag: v2.9.2-4a60f20
+
+pdf-service:
+  image:
+    tag: multiarch-master-99a308d
+  initContainers:
+    dbMigration:
+      image:
+        tag: master-aa460e8
+
+user-otp:
+  image:
+    tag: sandbox-log-86902f9
+
+egov-hrms:
+  image:
+    tag: hrms-boundary-individual-61e6097

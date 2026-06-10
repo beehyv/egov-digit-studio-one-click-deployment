@@ -7,8 +7,9 @@ templates:
     # Use "Debug" to make missing files errors invisible at the default log level(--log-level=INFO)
     missingFileHandler: Warn
     values:
-      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
-      - ../../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
+      - ../environments/image-tags.yaml
+      - ../environments/{{ requiredEnv "HELMFILE_ENV" }}.yaml
+      - ../environments/{{ requiredEnv "HELMFILE_ENV" }}-secrets.yaml
 
 
 releases:
@@ -108,6 +109,7 @@ releases:
     <<: *default
 
   - name: configmaps
+    chart: ./configmaps
     installed: true
     <<: *default
 

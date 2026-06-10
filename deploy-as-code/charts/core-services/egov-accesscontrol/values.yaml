@@ -53,7 +53,7 @@ env: |
       configMapKeyRef:
         name: egov-config
         key: state-level-tenant-id
-  {{- if index .Values "cluster-configs" "configmaps" "egov-config" "data" "is-environment-central-instance" }}        
+  {{- if index .Values "configmaps" "egov-config" "data" "is-environment-central-instance" }}        
   - name: EGOV_STATE_LIST
     value: {{ index .Values "global" "schema" | quote }}
   {{- end }}       
