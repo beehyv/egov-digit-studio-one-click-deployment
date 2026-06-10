@@ -160,9 +160,6 @@ secrets:
   git-sync:
     name: git-creds
     namespace: core
-  minio:
-    name: minio
-    namespace: backbone
   pgadmin:
     name: pgadmin
     namespace: backbone

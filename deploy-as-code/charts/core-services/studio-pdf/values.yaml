@@ -3,11 +3,11 @@ labels:
   app: "studio-pdf"
   group: "rainmaker"
 
-namespace: digit-studio
+namespace: core
 
 # Ingress Configs
 ingress:
-  namespace: digit-studio
+  namespace: core
   enabled: true
   zuul: true
   context: "studio-pdf"

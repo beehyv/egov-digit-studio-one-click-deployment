@@ -3,11 +3,11 @@ labels:
   app: "health-individual"
   group: "core"
 
-namespace: digit-studio
+namespace: core
 
 # Ingress Configs
 ingress:
-  namespace: digit-studio
+  namespace: core
   enabled: true
   zuul: true
   context: "health-individual"
@@ -32,6 +32,9 @@ appType: "java-spring"
 tracing-enabled: true
 heap: "-Xmx192m -Xms192m"
 java-args: ""
+
+hpa:
+  enabled: false
 
 # Additional Container Envs
 env: |

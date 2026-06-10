@@ -1,3 +1,8 @@
+global:
+  image:
+    tag: v2.9.2-4a60f20
+
+
 boundary-service:
   image:
     tag: v2.9.2-4a60f20
@@ -80,7 +85,11 @@ egov-url-shortening:
 
 egov-user:
   image:
-    tag: sandbox-log-f4a87d0
+    tag: sandbox-2.9.2-merge-857f015
+  initContainers:
+    dbMigration:
+      image:
+        tag: sandbox-2.9.2-merge-3ba6630
 
 egov-workflow-v2:
   image:
@@ -116,4 +125,68 @@ user-otp:
 
 egov-hrms:
   image:
-    tag: hrms-boundary-individual-61e6097
+    tag: sandbox-063a102
+  initContainers:
+    dbMigration:
+      image:
+        tag: sandbox-063a102
+
+
+
+# === studio services === #
+
+digit-studio:
+  image:
+    tag: studio-dev-ui-rc19-3-c3e3c69-1044
+
+public-service:
+  image:
+    tag: develop-4351bc1
+  initContainers:
+    dbMigration:
+      image:
+        tag: develop-4351bc1
+
+public-service-init:
+  image:
+    tag: develop-22ff7b0
+  initContainers:
+    dbMigration:
+      image:
+        tag: develop-22ff7b0
+
+studio-individual:
+  image:
+    tag: develop-586d99a
+  initContainers:
+    dbMigration:
+      image:
+        tag: develop-586d99a
+
+studio-pdf:
+  image:
+    tag: develop-cd9f31a
+
+studio-service-request:
+  image:
+    tag: develop-586d99a
+  initContainers:
+    dbMigration:
+      image:
+        tag: develop-586d99a
+
+health-individual:
+  image:
+    tag: master-fields-validation-changes-f6f8c3a
+  initContainers:
+    dbMigration:
+      image:
+        tag: master-fields-validation-changes-f6f8c3a
+
+health-service-request:
+  image:
+    tag: master-eb25d83
+  initContainers:
+    dbMigration:
+      image:
+        tag: master-eb25d83

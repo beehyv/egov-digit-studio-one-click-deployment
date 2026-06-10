@@ -3,7 +3,7 @@ labels:
   app: "inbox"
   group: "rainmaker"
 
-namespace : staging
+namespace : core
 
 hpa:
   enabled: true
@@ -13,7 +13,7 @@ ingress:
   enabled: true
   zuul: true
   context: "inbox"
-  namespace : staging
+  namespace : core
 
 
 # Container Configs

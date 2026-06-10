@@ -3,11 +3,11 @@ labels:
   app: "studio-individual"
   group: "core"
 
-namespace: digit-studio
+namespace: core
 
 # Ingress Configs
 ingress:
-  namespace: digit-studio
+  namespace: core
   enabled: true
   zuul: true
   context: "studio-individual"
@@ -41,6 +41,8 @@ egov-idgen-generate-path: "egov-idgen/id/_generate"
 egov-beneficiary-idgen-idpool-search-path: "beneficiary-idgen/id/id_pool/_search"
 egov-beneficiary-idgen-idpool-update-path: "beneficiary-idgen/id/id_pool/_update"
 
+hpa:
+  enabled: false
 # Additional Container Envs
 env: |
   - name: SPRING_KAFKA_CONSUMER_GROUP_ID

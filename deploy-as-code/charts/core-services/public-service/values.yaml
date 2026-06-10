@@ -3,7 +3,7 @@ labels:
   app: "public-service"
   group: "rainmaker"
 
-namespace: digit-studio
+namespace: core
 # Ingress Configs
 ingress:
   enabled: true
