@@ -46,7 +46,8 @@ heap: "-Xmx1000m -Xms1000m"
 memory_limits: 512Mi
 file-storage-mount-path: "/filestore"
 is-nfs-enabled: false
-is-s3-enabled: true
+is-s3-enabled: false
+minio-enabled: true
 
 persistence:
   enabled: false
