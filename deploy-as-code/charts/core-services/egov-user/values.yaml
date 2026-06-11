@@ -47,6 +47,8 @@ citizen-otp-fixed-enabled: "true"
 heap: "-Xmx256m -Xms256m"
 memory_limits: 512Mi
 java-args: ""
+memory_requests: "1Gi"
+memory_limits: "1540Mi"
 
 # Additional Container Envs
 env: |
@@ -62,9 +64,9 @@ env: |
         name: egov-service-host
         key: egov-otp
   - name: EGOV_MDMS_SEARCH_ENDPOINT
-    value: {{ .Values.mdmsV1SearchEndpoint | default "/egov-mdms-service/v1/_search" }} 
+    value: "/mdms-v2/v2/_search" 
   - name: MDMS_PATH
-    value: {{ .Values.mdmsV1SearchEndpoint | default "/egov-mdms-service/v1/_search" }}   
+    value: "/mdms-v2/v2/_search" 
   - name: EGOV_USER_HOST
     value: "http://localhost:8080"
   - name: EGOV_SERVICES_ACCESSCONTROL_HOST
@@ -97,6 +99,11 @@ env: |
       configMapKeyRef:
         name: egov-service-host
         key: egov-enc-service
+  - name: EGOV_STATE_LEVEL_TENANT_ID
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: egov-state-level-tenant-id
   - name: STATE_LEVEL_TENANT_ID
     valueFrom:
       configMapKeyRef:
