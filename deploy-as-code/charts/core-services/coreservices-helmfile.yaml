@@ -14,105 +14,105 @@ templates:
 
 
 releases:
-  - name: boundary-service
-    chart: ./boundary-service
-    installed: true
-    <<: *default
+#  - name: boundary-service
+#    chart: ./boundary-service
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-accesscontrol
+#    chart: ./egov-accesscontrol
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-enc-service
+#    chart: ./egov-enc-service
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-filestore
+#    chart: ./egov-filestore
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-idgen
+#    chart: ./egov-idgen
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-indexer
+#    chart: ./egov-indexer
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-localization
+#    chart: ./egov-localization
+#    installed: true
+#    <<: *default
 
-  - name: egov-accesscontrol
-    chart: ./egov-accesscontrol
-    installed: true
-    <<: *default
+#  - name: egov-mdms-service
+#    chart: ./egov-mdms-service
+#    installed: true
+#    <<: *default
 
-  - name: egov-enc-service
-    chart: ./egov-enc-service
-    installed: true
-    <<: *default
-
-  - name: egov-filestore
-    chart: ./egov-filestore
-    installed: true
-    <<: *default
-
-  - name: egov-idgen
-    chart: ./egov-idgen
-    installed: true
-    <<: *default
-
-  - name: egov-indexer
-    chart: ./egov-indexer
-    installed: true
-    <<: *default
-
-  - name: egov-localization
-    chart: ./egov-localization
-    installed: true
-    <<: *default
-
-  - name: egov-mdms-service
-    chart: ./egov-mdms-service
-    installed: true
-    <<: *default
-
-  - name: egov-notification-sms
-    chart: ./egov-notification-sms
-    installed: true
-    <<: *default
-
-  - name: egov-otp
-    chart: ./egov-otp
-    installed: true
-    <<: *default
-
+#  - name: egov-notification-sms
+#    chart: ./egov-notification-sms
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-otp
+#    chart: ./egov-otp
+#    installed: true
+#    <<: *default
+#
   - name: egov-persister
     chart: ./egov-persister
     installed: true
     <<: *default
+#
+#  - name: egov-url-shortening
+#    chart: ./egov-url-shortening
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-user
+#    chart: ./egov-user
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-workflow-v2
+#    chart: ./egov-workflow-v2
+#    installed: true
+#    <<: *default
+#
+#  - name: inbox
+#    chart: ./inbox
+#    installed: true
+#    <<: *default
 
-  - name: egov-url-shortening
-    chart: ./egov-url-shortening
-    installed: true
-    <<: *default
+#  - name: mdms-v2
+#    chart: ./mdms-v2
+#    installed: true
+#    <<: *default
 
-  - name: egov-user
-    chart: ./egov-user
-    installed: true
-    <<: *default
+#  - name: pdf-service
+#    chart: ./pdf-service
+#    installed: true
+#    <<: *default
 
-  - name: egov-workflow-v2
-    chart: ./egov-workflow-v2
-    installed: true
-    <<: *default
-
-  - name: inbox
-    chart: ./inbox
-    installed: true
-    <<: *default
-
-  - name: mdms-v2
-    chart: ./mdms-v2
-    installed: true
-    <<: *default
-
-  - name: pdf-service
-    chart: ./pdf-service
-    installed: true
-    <<: *default
-
-  - name: user-otp
-    chart: ./user-otp
-    installed: true
-    <<: *default
-
-  - name: egov-hrms
-    chart: ./egov-hrms
-    installed: true
-    <<: *default
-
-  - name: configmaps
-    chart: ./configmaps
-    installed: true
-    <<: *default
+#  - name: user-otp
+#    chart: ./user-otp
+#    installed: true
+#    <<: *default
+#
+#  - name: egov-hrms
+#    chart: ./egov-hrms
+#    installed: true
+#    <<: *default
+#
+#  - name: configmaps
+#    chart: ./configmaps
+#    installed: true
+#    <<: *default
 
 ### Studio-Services ###
 
