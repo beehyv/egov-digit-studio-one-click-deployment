@@ -105,7 +105,7 @@ inbox:
 
 mdms-v2:
   image:
-    tag: master-1e8d2bb
+    tag: v2.9.2-4a60f20
   initContainers:
     dbMigration:
       image:

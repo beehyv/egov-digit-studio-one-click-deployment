@@ -33,6 +33,9 @@ releases:
   values:
     - ./minio/values.yaml
     - {{ .Values | toYaml | nindent 8 }}
+    - auth:
+        rootUser: {{ .Values.secrets.minio.username }}
+        rootPassword: {{ .Values.secrets.minio.password }}
 
 #- name: postgresql
 #  installed: false
