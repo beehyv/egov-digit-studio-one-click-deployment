@@ -13,6 +13,7 @@ configmaps:
       egov-internal-microservice-user-uuid: 606192d1-4c90-42d9-878f-2294bc7ab9a9
       egov-services-fqdn-name: "https://digit-lts.digit.org/"
       egov-state-level-tenant-id: "pg"
+      state-level-tenant-id: "pg"
       es-host: "elasticsearch-data.backbone"
       es-indexer-host: "https://elasticsearch-data.backbone:9200/"
       flyway-locations: "filesystem:/flyway/sql,filesystem:/flyway/seed,filesystem:/flyway/qa,classpath:/db/migration/main"
@@ -44,7 +45,7 @@ configmaps:
       egov-localization: "http://egov-localization.egov:8080/"
       egov-idgen: "http://egov-idgen.egov:8080/"
       egov-otp: "http://egov-otp.egov:8080/"
-      egov-mdms-service: "http://mdms-v2.egov:8080/"
+      egov-mdms-service: "http://egov-mdms-service.egov:8080/"
       egov-workflow: "http://egov-workflow.egov:8080/"
       egov-workflow-v2: "http://egov-workflow-v2.egov:8080/"
       egov-indexer: "http://egov-indexer.egov:8080/"
@@ -66,7 +67,7 @@ configmaps:
       pgr-services: "http://pgr-services.egov:8080/"
       egov-pdf: "http://egov-pdf.egov:8080/"
       egov-user-event: "http://egov-user-event.egov:8080/"
-      mdms-service-v2: "http://mdms-v2.egov:8080/"
+      mdms-v2: "http://mdms-v2.egov:8080/"
       health-project: 'http://health-project.health:8080/'
       health-individual: 'http://health-individual.health:8080/'
 
