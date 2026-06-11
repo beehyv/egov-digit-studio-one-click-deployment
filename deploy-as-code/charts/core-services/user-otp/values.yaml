@@ -28,6 +28,7 @@ tracing-enabled: true
 heap: "-Xmx256m -Xms256m"
 memory_limits: 512Mi
 java-args: ""
+memory_limits: "768Mi"
 
 # Additional Container Envs
 env: |
