@@ -23,7 +23,20 @@ initContainers:
     enabled: true
     repo: "git@github.com:egovernments/configs"
     branch: "master"
-
+  wait-for-kafka:
+    image:
+      repository: busybox
+      tag: latest
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "Waiting for Kafka to be ready..."
+        until nc -z kafka-kraft.backbone-dev.svc.cluster.local 9092; do
+          echo "Kafka is not available yet..."
+          sleep 5
+        done
+        echo "Kafka is up!"
 # Container Configs
 image:
   repository: "egov-indexer"
