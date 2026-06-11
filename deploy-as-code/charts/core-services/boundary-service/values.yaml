@@ -41,6 +41,10 @@ kafka-topics-update-boundary-relationship: "update-boundary-relationship"
 
 # Additional Container Envs
 env: |
+  - name: SERVER_PORT
+    value: "8080"
+  - name: SERVER_SERVLET_CONTEXT_PATH
+    value: /boundary-service
   - name: SERVER_CONTEXT_PATH
     value: /boundary-service
   - name: SPRING_KAFKA_CONSUMER_GROUP_ID
@@ -75,3 +79,37 @@ env: |
     value: {{ index .Values "kafka-topics-update-boundary" | quote }}
   - name: KAFKA_TOPICS_UPDATE_BOUNDARY_HIERARCHY
     value: {{ index .Values "kafka-topics-update-boundary-hierarchy" | quote }}
+  - name: EGOV_LOCALIZATION_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-localization
+  - name: EGOV_LOCALIZATION_SEARCH_ENDPOINT
+    value: /localization/messages/v1/_search
+  - name: EGOV_IDGEN_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-idgen
+  - name: EGOV_USER_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-user
+  - name: EGOV_MDMS_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-mdms-service
+  - name: EGOV_HRMS_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-hrms
+  - name: WORKFLOW_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-workflow-v2
+
+
