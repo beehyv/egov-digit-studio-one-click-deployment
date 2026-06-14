@@ -52,6 +52,11 @@ memory_limits: "1540Mi"
 
 # Additional Container Envs
 env: |
+  - name: SPRING_DATASOURCE_URL
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: db-url
   - name: SERVER_PORT
     value: "8080"
   - name: SPRING_REDIS_HOST

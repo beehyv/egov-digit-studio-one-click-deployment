@@ -64,10 +64,10 @@ releases:
 #    installed: true
 #    <<: *default
 #
-  - name: egov-persister
-    chart: ./egov-persister
-    installed: true
-    <<: *default
+#  - name: egov-persister
+#    chart: ./egov-persister
+#    installed: true
+#    <<: *default
 #
 #  - name: egov-url-shortening
 #    chart: ./egov-url-shortening
@@ -84,13 +84,18 @@ releases:
 #    installed: true
 #    <<: *default
 #
-#  - name: inbox
-#    chart: ./inbox
-#    installed: true
-#    <<: *default
+  - name: inbox
+    chart: ./inbox
+    installed: true
+    <<: *default
 
 #  - name: mdms-v2
 #    chart: ./mdms-v2
+#    installed: true
+#    <<: *default
+
+#  - name: default-data-handler # Replace with your desired namespace
+#    chart: ./default-data-handler
 #    installed: true
 #    <<: *default
 
