@@ -55,7 +55,7 @@ configmaps:
       pdf-service: "http://pdf-service.core:8080/"
       user-otp: "http://user-otp.core:8080/"
       egov-apportion-service: "http://egov-apportion-service:8080/"
-      minio-url: "https://minio-uat.digit.org/"
+      minio-url: "http://minio.backbone:9000/"
       zuul: "http://zuul:8080/"
       egov-url-shortening: "http://eus:8080/"
       vendor: "http://vendor.sanitation:8080"
@@ -114,4 +114,7 @@ secrets:
     namespace: monitoring
   egov-hrms:
     name: egov-hrms
+    namespace: core
+  minio:
+    name: minio
     namespace: core
