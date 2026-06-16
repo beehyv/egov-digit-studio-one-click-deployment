@@ -68,6 +68,8 @@ env: |
     value: "200MB"
   - name: SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE
     value: "200MB"
+  - name: MINIO_URL
+    value: "https://s3.ap-south-1.amazonaws.com"  
   - name: ISNFSSTORAGEENABLED
     value: {{ index .Values "is-nfs-enabled" | quote }}
   {{- if index .Values "is-nfs-enabled" }}
