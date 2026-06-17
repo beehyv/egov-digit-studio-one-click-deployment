@@ -1,4 +1,5 @@
 build.yaml
-
+Chart.lock
+*.tgz
 # Testing secrets — plaintext, never commit with real passwords
 deploy-as-code/helm/environments/testing-secrets.yaml
