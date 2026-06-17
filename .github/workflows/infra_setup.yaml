@@ -1,0 +1,86 @@
+name: Create Infra
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "envirement file prefix (eg: 'env', 'dev')"
+        required: true
+
+jobs:
+  infra-creation:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install sops
+        run: |
+          sudo apt update
+          wget https://github.com/mozilla/sops/releases/download/v3.7.1/sops-v3.7.1.linux
+          chmod +x sops-v3.7.1.linux
+          sudo mv sops-v3.7.1.linux /usr/local/bin/sops
+
+      - name: Decrypt secrets
+        working-directory: ./deploy-as-code/charts
+        run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/${{ inputs.environment }}-secrets.yaml
+
+      - name: Parse YAML and export as environment variables
+        working-directory: ./deploy-as-code/charts
+        run: |
+          db_password=$(yq -r '.secrets.db.password' ./environments/${{ inputs.environment }}-secrets.yaml)
+          echo "db_password=$db_password" >> $GITHUB_ENV
+
+      # === Set up TF remote state === #
+      - name: Terraform Init - remotestate
+        working-directory: infra-as-code/terraform/sample-aws/remote-state
+        run: terraform init
+
+      - name: Terraform Validate - remotestate
+        working-directory: infra-as-code/terraform/sample-aws/remote-state
+        run: terraform validate -no-color
+
+      - name: Terraform Plan - remotestate
+        working-directory: infra-as-code/terraform/sample-aws/remote-state
+        run: terraform plan -no-color -input=false --var-file='../variables/${{ inputs.environment }}.tfvars'
+
+      # - name: Terraform Apply - remotestate
+      #   working-directory: infra-as-code/terraform/sample-aws/remote-state
+      #   run: terraform apply -no-color -input=false -auto-approve --var-file='../variables/${{ inputs.environment }}.tfvars'
+      #   continue-on-error: true
+
+      # === Create Infra === #
+      - name: Terraform init - Infra creation
+        working-directory: infra-as-code/terraform/sample-aws
+        run: terraform init -backend-config=./backends/${{ inputs.environment }}.hcl
+
+      - name: Terraform Validate - Infra creation
+        working-directory: infra-as-code/terraform/sample-aws
+        run: terraform validate -no-color
+
+      - name: Terraform Plan - Infra creation
+        working-directory: infra-as-code/terraform/sample-aws
+        run: |
+          terraform plan -no-color -input=false \
+          --var-file='./variables/${{ inputs.environment }}.tfvars' \
+          -var db_password=$db_password
+
+      # - name: Terraform Apply - Infra creation
+      #   working-directory: infra-as-code/terraform/sample-aws
+      #   run: |
+      #     terraform apply -no-color -input=false -auto-approve \
+      #     --var-file='./variables/${{ inputs.environment }}.tfvars' \
+      #     -var db_password=$db_password
+      #   continue-on-error: true
