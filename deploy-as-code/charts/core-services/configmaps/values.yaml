@@ -75,9 +75,9 @@ configmaps:
 root-ingress:
   name: root-ingress
   namespace: core
-  cert-issuer: "letsencrypt-staging"
-  appRoot: digit-ui
-  serviceName: digit-ui
+  cert-issuer: "letsencrypt-production"
+  appRoot: digit-studio
+  serviceName: digit-studio
   servicePort: 80
 
 

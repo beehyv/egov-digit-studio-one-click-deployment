@@ -24,7 +24,7 @@ initContainers:
       - name: SCHEMA_NAME
         value: {{ index .Values "egov-hrms-schemas" | quote }}
       {{- end }}
-      - name: "DB_URL"
+      - name: SPRING_DATASOURCE_URL
         valueFrom:
           configMapKeyRef:
             name: egov-config
