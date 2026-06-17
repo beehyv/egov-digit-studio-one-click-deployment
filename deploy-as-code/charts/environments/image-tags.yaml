@@ -2,58 +2,57 @@ global:
   image:
     tag: v2.9.2-4a60f20
 
-
 boundary-service:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-1e8d2bb
 
 egov-accesscontrol:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
 
 egov-enc-service:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-log-enc-ad23f2c
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-log-enc-ad23f2c
 
 egov-filestore:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-1e8d2bb
 
 egov-idgen:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-1e8d2bb
 
 egov-indexer:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-1e8d2bb
 
 egov-localization:
   image:
-    tag: v2.9.2-4a60f20
+    tag: redis-localization-key-5c0a4c4
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: redis-localization-key-5c0a4c4
 
 egov-mdms-service:
   image:
@@ -65,39 +64,39 @@ egov-notification-sms:
 
 egov-otp:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-1e8d2bb
 
 egov-persister:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-3b238aa
 
 egov-url-shortening:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-1e8d2bb
 
 egov-user:
   image:
-    tag: sandbox-2.9.2-merge-857f015
+    tag: sandbox-log-f4a87d0
   initContainers:
     dbMigration:
       image:
-        tag: sandbox-2.9.2-merge-3ba6630
+        tag: sandbox-log-f4a87d0
 
 egov-workflow-v2:
   image:
-    tag: v2.9.2-4a60f20
+    tag: parallel-workflows-lazy-injection-1ace233
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: parallel-workflows-lazy-injection-1ace233
 
 inbox:
   image:
@@ -105,11 +104,11 @@ inbox:
 
 mdms-v2:
   image:
-    tag: v2.9.2-4a60f20
+    tag: master-1e8d2bb
   initContainers:
     dbMigration:
       image:
-        tag: v2.9.2-4a60f20
+        tag: master-1e8d2bb
 
 pdf-service:
   image:
@@ -125,35 +124,33 @@ user-otp:
 
 egov-hrms:
   image:
-    tag: sandbox-063a102
+    tag: hrms-boundary-individual-61e6097
   initContainers:
     dbMigration:
       image:
-        tag: sandbox-063a102
-
-
+        tag: hrms-boundary-individual-61e6097
 
 # === studio services === #
 
 digit-studio:
   image:
-    tag: studio-dev-ui-rc19-3-c3e3c69-1044
+    tag: studio-dev-ui-rc19-5-684a989-1415
 
 public-service:
   image:
-    tag: develop-4351bc1
+    tag: CCSD-1853-17eccfa
   initContainers:
     dbMigration:
       image:
-        tag: develop-4351bc1
+        tag: CCSD-1853-17eccfa
 
 public-service-init:
   image:
-    tag: develop-22ff7b0
+    tag: develop-9087218
   initContainers:
     dbMigration:
       image:
-        tag: develop-22ff7b0
+        tag: develop-9087218
 
 studio-individual:
   image:
@@ -165,7 +162,7 @@ studio-individual:
 
 studio-pdf:
   image:
-    tag: develop-cd9f31a
+    tag: develop-16d12f1
 
 studio-service-request:
   image:
@@ -177,16 +174,16 @@ studio-service-request:
 
 health-individual:
   image:
-    tag: master-fields-validation-changes-f6f8c3a
+    tag: master-nigeria-finalpull-dacaefe
   initContainers:
     dbMigration:
       image:
-        tag: master-fields-validation-changes-f6f8c3a
+        tag: master-nigeria-finalpull-dacaefe
 
 health-service-request:
   image:
-    tag: master-eb25d83
+    tag: multiarch-changes-digit-studio-3fd88be
   initContainers:
     dbMigration:
       image:
-        tag: master-eb25d83
+        tag: multiarch-changes-digit-studio-3fd88be
