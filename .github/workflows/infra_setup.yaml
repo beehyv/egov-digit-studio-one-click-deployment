@@ -39,13 +39,13 @@ jobs:
 
       # TODO: encrypt secrets and uncomment this
       # - name: Decrypt secrets
-      #   working-directory: ./deploy-as-code/charts
-      #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/${{ inputs.environment }}-secrets.yaml
+      #   working-directory: ./deploy-as-code/charts/environments
+      #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ${{ inputs.environment }}-secrets.yaml
 
-      - name: Export DB password 
-        working-directory: ./deploy-as-code/charts
+      - name: Export DB password as env
+        working-directory: ./deploy-as-code/charts/environments
         run: |
-          db_password=$(yq -r '.secrets.db.password' ./environments/${{ inputs.environment }}-secrets.yaml)
+          db_password=$(yq -r '.secrets.db.password' ${{ inputs.environment }}-secrets.yaml)
           echo "::add-mask::$db_password"
           echo "db_password=$db_password" >> $GITHUB_ENV
 
@@ -97,4 +97,3 @@ jobs:
       #     terraform apply -no-color -input=false -auto-approve \
       #     --var-file='./variables/${{ inputs.environment }}.tfvars' \
       #     -var db_password=$db_password
-      #   continue-on-error: true
