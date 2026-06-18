@@ -37,11 +37,12 @@ jobs:
           chmod +x sops-v3.7.1.linux
           sudo mv sops-v3.7.1.linux /usr/local/bin/sops
 
-      - name: Decrypt secrets
-        working-directory: ./deploy-as-code/charts
-        run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/${{ inputs.environment }}-secrets.yaml
+      # TODO: encrypt secrets and uncomment this
+      # - name: Decrypt secrets
+      #   working-directory: ./deploy-as-code/charts
+      #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/${{ inputs.environment }}-secrets.yaml
 
-      - name: Parse YAML and export as environment variables
+      - name: Export DB password 
         working-directory: ./deploy-as-code/charts
         run: |
           db_password=$(yq -r '.secrets.db.password' ./environments/${{ inputs.environment }}-secrets.yaml)
