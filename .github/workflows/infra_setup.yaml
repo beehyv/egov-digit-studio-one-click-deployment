@@ -4,8 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "envirement file prefix (eg: 'env', 'dev')"
+        description: "Select envirement."
         required: true
+        type: choice
+        options:
+          - env
+        default: env
 
 jobs:
   infra-creation:
