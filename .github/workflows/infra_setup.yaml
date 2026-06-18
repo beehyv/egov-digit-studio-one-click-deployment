@@ -45,6 +45,7 @@ jobs:
         working-directory: ./deploy-as-code/charts
         run: |
           db_password=$(yq -r '.secrets.db.password' ./environments/${{ inputs.environment }}-secrets.yaml)
+          echo "::add-mask::$db_password"
           echo "db_password=$db_password" >> $GITHUB_ENV
 
 
