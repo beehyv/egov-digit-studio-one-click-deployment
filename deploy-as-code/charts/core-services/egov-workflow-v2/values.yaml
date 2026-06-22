@@ -108,4 +108,10 @@ env: |
   {{- if index .Values "wf-max-limit" }}   
   - name: EGOV_WF_MAX_LIMIT     
     value: {{ index .Values "wf-max-limit" | quote }}   
-  {{- end }} 
+  {{- end }}
+
+  - name: SPRING_DATASOURCE_URL
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: db-url
