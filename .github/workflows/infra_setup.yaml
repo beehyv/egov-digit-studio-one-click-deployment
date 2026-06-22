@@ -10,6 +10,12 @@ on:
         options:
           - env
         default: env
+  push:
+    branches:
+      - infra-workflow
+
+env:
+  environment: ${{ inputs.environment || 'env' }}
 
 jobs:
   infra-creation:
@@ -40,12 +46,12 @@ jobs:
       # TODO: encrypt secrets and uncomment this
       # - name: Decrypt secrets
       #   working-directory: ./deploy-as-code/charts/environments
-      #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ${{ inputs.environment }}-secrets.yaml
+      #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ${{ env.environment }}-secrets.yaml
 
       - name: Export DB password as env
         working-directory: ./deploy-as-code/charts/environments
         run: |
-          db_password=$(yq -r '.secrets.db.password' ${{ inputs.environment }}-secrets.yaml)
+          db_password=$(yq -r '.secrets.db.password' ${{ env.environment }}-secrets.yaml)
           echo "::add-mask::$db_password"
           echo "db_password=$db_password" >> $GITHUB_ENV
 
@@ -68,17 +74,17 @@ jobs:
 
       - name: Terraform Plan - remotestate
         working-directory: infra-as-code/terraform/sample-aws/remote-state
-        run: terraform plan -no-color -input=false --var-file='../variables/${{ inputs.environment }}.tfvars'
+        run: terraform plan -no-color -input=false --var-file='../variables/${{ env.environment }}.tfvars'
 
       # - name: Terraform Apply - remotestate
       #   working-directory: infra-as-code/terraform/sample-aws/remote-state
-      #   run: terraform apply -no-color -input=false -auto-approve --var-file='../variables/${{ inputs.environment }}.tfvars'
+      #   run: terraform apply -no-color -input=false -auto-approve --var-file='../variables/${{ env.environment }}.tfvars'
       #   continue-on-error: true
 
       # === Create Infra === #
       - name: Terraform init - Infra creation
         working-directory: infra-as-code/terraform/sample-aws
-        run: terraform init -backend-config=./backends/${{ inputs.environment }}.hcl
+        run: terraform init -backend-config=./backends/${{ env.environment }}.hcl
 
       - name: Terraform Validate - Infra creation
         working-directory: infra-as-code/terraform/sample-aws
@@ -88,12 +94,12 @@ jobs:
         working-directory: infra-as-code/terraform/sample-aws
         run: |
           terraform plan -no-color -input=false \
-          --var-file='./variables/${{ inputs.environment }}.tfvars' \
+          --var-file='./variables/${{ env.environment }}.tfvars' \
           -var db_password=$db_password
 
       # - name: Terraform Apply - Infra creation
       #   working-directory: infra-as-code/terraform/sample-aws
       #   run: |
       #     terraform apply -no-color -input=false -auto-approve \
-      #     --var-file='./variables/${{ inputs.environment }}.tfvars' \
+      #     --var-file='./variables/${{ env.environment }}.tfvars' \
       #     -var db_password=$db_password
