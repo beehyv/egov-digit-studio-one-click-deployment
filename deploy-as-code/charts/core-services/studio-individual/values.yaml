@@ -133,7 +133,7 @@ env: |
         name: egov-service-host
         key: mdms-v2
   - name: EGOV_MDMS_SEARCH_ENDPOINT
-    value: {{ .Values.mdmsV1SearchEndpoint | default "/egov-mdms-service/v1/_search" }}   
+    value: "/mdms-v2/v1/_search"
   - name: EGOV_ENC_HOST
     valueFrom:
       configMapKeyRef:
