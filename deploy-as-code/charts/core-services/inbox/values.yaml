@@ -105,3 +105,8 @@ env: |
       secretKeyRef:
         name:  elasticsearch-master-credentials
         key: password
+  - name: SPRING_DATASOURCE_URL
+    valueFrom:
+      configMapKeyRef:
+        name: egov-config
+        key: db-url
