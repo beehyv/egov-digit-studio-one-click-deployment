@@ -20,6 +20,11 @@ initContainers:
     image:
       repository: "egov-hrms-db"
     env: |
+      - name: SPRING_DATASOURCE_URL
+        valueFrom:
+          configMapKeyRef:
+            name: egov-config
+            key: db-url
       {{- if index .Values "egov-hrms-ismultischema-enabled" }}
       - name: SCHEMA_NAME
         value: {{ index .Values "egov-hrms-schemas" | quote }}
