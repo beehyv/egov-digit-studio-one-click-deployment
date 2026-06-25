@@ -23,6 +23,7 @@ healthChecks:
   livenessProbePath: "/inbox/health"
   readinessProbePath: "/inbox/health"
 appType: "java-spring"
+disable_otel: true
 tracing-enabled: true
 memory_limits: 512Mi
 cpu_limits: 300m
@@ -105,8 +106,3 @@ env: |
       secretKeyRef:
         name:  elasticsearch-master-credentials
         key: password
-  - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      configMapKeyRef:
-        name: egov-config
-        key: db-url

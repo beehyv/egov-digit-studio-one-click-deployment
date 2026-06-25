@@ -12,6 +12,8 @@ ingress:
   zuul: true
   context: "egov-hrms"
 
+disable_otel: true
+
 # Init Containers Configs
 initContainers:
   dbMigration:
@@ -24,11 +26,6 @@ initContainers:
       - name: SCHEMA_NAME
         value: {{ index .Values "egov-hrms-schemas" | quote }}
       {{- end }}
-      - name: SPRING_DATASOURCE_URL
-        valueFrom:
-          configMapKeyRef:
-            name: egov-config
-            key: db-url
       - name: "SCHEMA_TABLE"
         value: {{ .Values.initContainers.dbMigration.schemaTable | quote }}
       - name: "FLYWAY_USER"
@@ -166,9 +163,3 @@ env: |
     value: "false"  
   - name: MANAGEMENT_SECURITY_ENABLED
     value: "false"
-
-  - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      configMapKeyRef:
-        name: egov-config
-        key: db-url

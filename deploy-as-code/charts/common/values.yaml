@@ -9,6 +9,7 @@ httpPort: 8080
 appType: ""
 
 disableAnnotationTimestamp: true
+disable_otel: false
 
 ingress:
   enabled: false
@@ -128,7 +129,7 @@ extraEnv:
         valueFrom:
           configMapKeyRef:
             name: egov-config
-            key: db-otel-url
+            key: {{ ternary "db-url" "db-otel-url" .Values.disable_otel }}
       - name: FLYWAY_ENABLED
         value: "false"      
       - name: SPRING_FLYWAY_ENABLED
