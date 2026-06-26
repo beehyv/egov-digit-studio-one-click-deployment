@@ -16,48 +16,48 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
         - |
-          response=$(curl --location 'http://egov-user:8080/user/users/_createnovalidate' \
-                      --header 'Content-Type: application/json' \
-                      --data-raw '{
-                          "requestInfo": {
-                              "apiId": "Rainmaker",
-                              "ver": ".01",
-                              "ts": null,
-                              "action": "_update",
-                              "did": "1",
-                              "key": "",
-                              "msgId": "20170310130900|en_IN",
-                              "authToken": "51e00caf-3218-4f15-ba70-a45f7d40abc1"
-                          },
-                          "user": {
-                              "userName": "{{ .Values.secrets.user.username }}",
-                              "name": "Admin User",
-                              "gender": null,
-                              "mobileNumber": "9898989898",
-                              "type": "EMPLOYEE",
-                              "active" : true,
-                              "password" : "{{ .Values.secrets.user.password }}",
-                              "roles": [
-                                      {
-                                          "name": "Super User",
-                                          "code": "SUPERUSER",
-                                          "tenantId": "pg"
-                                      },
-                                      {
-                                          "name": "PGR CSR for registering complaints",
-                                          "code": "CSR",
-                                          "tenantId": "pg"
-                                      },
-                                      {
-                                          "name": "GRO for searching complaints",
-                                          "code": "GRO",
-                                          "tenantId": "pg"
-                                      }
-                              ],
-                              "emailId": "xyz@gmail.com",
-                              "tenantId": "pg"
-                          }
-                      }')
+          response=$(curl --location 'http://egov-user.core:8080/user/users/_createnovalidate' \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+                "RequestInfo": {
+                    "apiId": "Rainmaker",
+                    "ver": ".01",
+                    "ts": null,
+                    "action": "_update",
+                    "did": "1",
+                    "key": "",
+                    "msgId": "20170310130900|en_IN",
+                    "authToken": "51e00caf-3218-4f15-ba70-a45f7d40abc1"
+                },
+                "User": {
+                    "userName": "{{ .Values.secrets.user.username }}",
+                    "name": "Admin User",
+                    "gender": null,
+                    "mobileNumber": "9898989898",
+                    "type": "EMPLOYEE",
+                    "active" : true,
+                    "password" : "{{ .Values.secrets.user.password }}",
+                    "roles": [
+                        {
+                            "name": "Super User",
+                            "code": "SUPERUSER",
+                            "tenantId": "pg"
+                        },
+                        {
+                            "name": "PGR CSR for registering complaints",
+                            "code": "CSR",
+                            "tenantId": "pg"
+                        },
+                        {
+                            "name": "GRO for searching complaints",
+                            "code": "GRO",
+                            "tenantId": "pg"
+                        }
+                    ],
+                    "emailId": "xyz@gmail.com",
+                    "tenantId": "pg"
+                }
+            }')
           echo "Curl response: $response"
       restartPolicy: Never
   backoffLimit: 1
