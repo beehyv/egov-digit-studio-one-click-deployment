@@ -74,10 +74,10 @@ releases:
 #    installed: true
 #    <<: *default
 #
-  - name: egov-user
-    chart: ./egov-user
-    installed: true
-    <<: *default
+#  - name: egov-user
+#    chart: ./egov-user
+#    installed: true
+#    <<: *default
 #
 #  - name: egov-workflow-v2
 #    chart: ./egov-workflow-v2
@@ -94,6 +94,11 @@ releases:
 #    installed: true
 #    <<: *default
 
+  - name: gateway # Replace with your desired namespace
+    chart: ./gateway
+    installed: true
+    <<: *default
+
 #  - name: default-data-handler # Replace with your desired namespace
 #    chart: ./default-data-handler
 #    installed: true
@@ -109,10 +114,10 @@ releases:
 #    installed: true
 #    <<: *default
 #
-  - name: egov-hrms
-    chart: ./egov-hrms
-    installed: true
-    <<: *default
+#  - name: egov-hrms
+#    chart: ./egov-hrms
+#    installed: true
+#    <<: *default
 #
 #  - name: configmaps
 #    chart: ./configmaps
@@ -151,10 +156,10 @@ releases:
 #    installed: true
 #    <<: *default
 #
-  - name: health-individual
-    chart: ./health-individual
-    installed: true
-    <<: *default
+#  - name: health-individual
+#    chart: ./health-individual
+#    installed: true
+#    <<: *default
 #
 #  - name: health-service-request
 #    chart: ./health-service-request
