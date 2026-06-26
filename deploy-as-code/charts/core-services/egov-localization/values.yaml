@@ -25,6 +25,7 @@ image:
   repository: "egov-localization"
 replicas: "1"
 appType: "java-spring"
+disable_otel: true
 tracing-enabled: true
 heap: "-Xmx512m -Xms386m"
 memory_limits: 768Mi

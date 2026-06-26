@@ -56,6 +56,7 @@ healthChecks:
   livenessProbePath: "/egov-workflow-v2/health"
   readinessProbePath: "/egov-workflow-v2/health"
 appType: "java-spring"
+disable_otel: true
 tracing-enabled: true
 heap: "-Xmx256m -Xms256m"
 memory_limits: 512Mi
@@ -108,4 +109,4 @@ env: |
   {{- if index .Values "wf-max-limit" }}   
   - name: EGOV_WF_MAX_LIMIT     
     value: {{ index .Values "wf-max-limit" | quote }}   
-  {{- end }} 
+  {{- end }}
