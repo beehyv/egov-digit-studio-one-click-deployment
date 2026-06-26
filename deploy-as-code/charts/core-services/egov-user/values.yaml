@@ -29,6 +29,7 @@ healthChecks:
   livenessProbePath: "/user/health"
   readinessProbePath: "/user/health"
 appType: "java-spring"
+disable_otel: true
 tracing-enabled: true
 egov-state-level-tenant-id: "pb"
 decryption-abac-enabled: "false"
@@ -45,18 +46,12 @@ citizen-registration-withlogin: "true"
 citizen-otp-fixed: "123456"
 citizen-otp-fixed-enabled: "true"
 heap: "-Xmx256m -Xms256m"
-memory_limits: 512Mi
 java-args: ""
 memory_requests: "1Gi"
 memory_limits: "1540Mi"
 
 # Additional Container Envs
 env: |
-  - name: SPRING_DATASOURCE_URL
-    valueFrom:
-      configMapKeyRef:
-        name: egov-config
-        key: db-url
   - name: SERVER_PORT
     value: "8080"
   - name: SPRING_REDIS_HOST
