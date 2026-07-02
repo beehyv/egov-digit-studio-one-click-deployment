@@ -3,11 +3,24 @@ name: DIGIT-Install workflow for Testing
 
 on:
   workflow_dispatch:
-  repository_dispatch:
+    inputs:
+      create_infra:
+        description: "Create/Update infracture before deploying."
+        type: boolean
+        required: true
+        default: false
 
 
 jobs:
+  Infra_creation:
+    if: ${{ github.event.inputs.create_infra }}
+    uses: ./.github/workflows/infra_setup.yaml
+    with:
+      environment: env
+
   DIGIT-deployment:
+    needs: Infra_creation
+    if: ${{ !cancelled() && !failed() }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
