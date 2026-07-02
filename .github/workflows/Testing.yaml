@@ -67,7 +67,7 @@ jobs:
         env:
           HELMFILE_ENV: "testing"
         run: |
-          helmfile -f digit-helmfile.yaml apply --include-needs=true\
+          helmfile -f digit-helmfile.yaml template --include-needs=true\
             --set digit-studio.image.tag=${{ env.digit-studio }}\
             --set public-service.image.tag=${{ env.public-service }}\
             --set public-service-init.image.tag=${{ env.public-service-init }}\
