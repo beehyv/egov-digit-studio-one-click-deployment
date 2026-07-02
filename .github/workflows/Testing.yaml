@@ -20,7 +20,7 @@ jobs:
 
   DIGIT-deployment:
     needs: Infra_creation
-    if: ${{ !cancelled() && !failed() }}
+    if: ${{ !cancelled() && !failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
