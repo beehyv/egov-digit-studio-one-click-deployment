@@ -17,6 +17,7 @@ jobs:
     uses: ./.github/workflows/infra_setup.yaml
     with:
       environment: env
+    secrets: inherit
 
   DIGIT-deployment:
     needs: Infra_creation
