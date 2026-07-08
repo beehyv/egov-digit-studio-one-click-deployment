@@ -12,8 +12,8 @@ configmaps:
       egov-bnd-live-citizen-tenants: pg.testing
       egov-internal-microservice-user-uuid: 606192d1-4c90-42d9-878f-2294bc7ab9a9
       egov-services-fqdn-name: "https://digit-lts.digit.org/"
-      egov-state-level-tenant-id: "pg"
-      state-level-tenant-id: "pg"
+      egov-state-level-tenant-id: "st"
+      state-level-tenant-id: "st"
       es-host: "elasticsearch-data.backbone"
       es-indexer-host: "https://elasticsearch-data.backbone:9200/"
       flyway-locations: "filesystem:/flyway/sql,filesystem:/flyway/seed,filesystem:/flyway/qa,classpath:/db/migration/main"

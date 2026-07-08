@@ -14,154 +14,154 @@ templates:
 
 
 releases:
-#  - name: boundary-service
-#    chart: ./boundary-service
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-accesscontrol
-#    chart: ./egov-accesscontrol
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-enc-service
-#    chart: ./egov-enc-service
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-filestore
-#    chart: ./egov-filestore
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-idgen
-#    chart: ./egov-idgen
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-indexer
-#    chart: ./egov-indexer
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-localization
-#    chart: ./egov-localization
-#    installed: true
-#    <<: *default
+  - name: boundary-service
+    chart: ./boundary-service
+    installed: true
+    <<: *default
 
-#  - name: egov-mdms-service
-#    chart: ./egov-mdms-service
-#    installed: true
-#    <<: *default
+  - name: egov-accesscontrol
+    chart: ./egov-accesscontrol
+    installed: true
+    <<: *default
 
-#  - name: egov-notification-sms
-#    chart: ./egov-notification-sms
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-otp
-#    chart: ./egov-otp
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-persister
-#    chart: ./egov-persister
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-url-shortening
-#    chart: ./egov-url-shortening
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-user
-#    chart: ./egov-user
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-workflow-v2
-#    chart: ./egov-workflow-v2
-#    installed: true
-#    <<: *default
-#
-#  - name: inbox
-#    chart: ./inbox
-#    installed: true
-#    <<: *default
+  - name: egov-enc-service
+    chart: ./egov-enc-service
+    installed: true
+    <<: *default
 
-#  - name: mdms-v2
-#    chart: ./mdms-v2
-#    installed: true
-#    <<: *default
+  - name: egov-filestore
+    chart: ./egov-filestore
+    installed: true
+    <<: *default
+
+  - name: egov-idgen
+    chart: ./egov-idgen
+    installed: true
+    <<: *default
+
+  - name: egov-indexer
+    chart: ./egov-indexer
+    installed: true
+    <<: *default
+
+  - name: egov-localization
+    chart: ./egov-localization
+    installed: true
+    <<: *default
+
+  - name: egov-mdms-service
+    chart: ./egov-mdms-service
+    installed: true
+    <<: *default
+
+  - name: egov-notification-sms
+    chart: ./egov-notification-sms
+    installed: true
+    <<: *default
+
+  - name: egov-otp
+    chart: ./egov-otp
+    installed: true
+    <<: *default
+
+  - name: egov-persister
+    chart: ./egov-persister
+    installed: true
+    <<: *default
+
+  - name: egov-url-shortening
+    chart: ./egov-url-shortening
+    installed: true
+    <<: *default
+
+  - name: egov-user
+    chart: ./egov-user
+    installed: true
+    <<: *default
+
+  - name: egov-workflow-v2
+    chart: ./egov-workflow-v2
+    installed: true
+    <<: *default
+
+  - name: inbox
+    chart: ./inbox
+    installed: true
+    <<: *default
+
+  - name: mdms-v2
+    chart: ./mdms-v2
+    installed: true
+    <<: *default
 
   - name: gateway # Replace with your desired namespace
     chart: ./gateway
     installed: true
     <<: *default
 
-#  - name: default-data-handler # Replace with your desired namespace
-#    chart: ./default-data-handler
-#    installed: true
-#    <<: *default
+  - name: default-data-handler # Replace with your desired namespace
+    chart: ./default-data-handler
+    installed: true
+    <<: *default
 
-#  - name: pdf-service
-#    chart: ./pdf-service
-#    installed: true
-#    <<: *default
+  - name: pdf-service
+    chart: ./pdf-service
+    installed: true
+    <<: *default
 
-#  - name: user-otp
-#    chart: ./user-otp
-#    installed: true
-#    <<: *default
-#
-#  - name: egov-hrms
-#    chart: ./egov-hrms
-#    installed: true
-#    <<: *default
-#
-#  - name: configmaps
-#    chart: ./configmaps
-#    installed: true
-#    <<: *default
+  - name: user-otp
+    chart: ./user-otp
+    installed: true
+    <<: *default
 
-### Studio-Services ###
+  - name: egov-hrms
+    chart: ./egov-hrms
+    installed: true
+    <<: *default
 
-#  - name: digit-studio
-#    chart: ./digit-studio
-#    installed: true
-#    <<: *default
-#
-#  - name: public-service
-#    chart: ./public-service
-#    installed: true
-#    <<: *default
-#
-#  - name: public-service-init
-#    chart: ./public-service-init
-#    installed: true
-#    <<: *default
-#
-#  - name: studio-individual
-#    chart: ./studio-individual
-#    installed: true
-#    <<: *default
-#
-#  - name: studio-pdf
-#    chart: ./studio-pdf
-#    installed: true
-#    <<: *default
-#
-#  - name: studio-service-request
-#    chart: ./studio-service-request
-#    installed: true
-#    <<: *default
-#
-#  - name: health-individual
-#    chart: ./health-individual
-#    installed: true
-#    <<: *default
-#
-#  - name: health-service-request
-#    chart: ./health-service-request
-#    installed: true
-#    <<: *default
+  - name: configmaps
+    chart: ./configmaps
+    installed: true
+    <<: *default
+
+## Studio-Services ###
+
+  - name: digit-studio
+    chart: ./digit-studio
+    installed: true
+    <<: *default
+
+  - name: public-service
+    chart: ./public-service
+    installed: true
+    <<: *default
+
+  - name: public-service-init
+    chart: ./public-service-init
+    installed: true
+    <<: *default
+
+  - name: studio-individual
+    chart: ./studio-individual
+    installed: true
+    <<: *default
+
+  - name: studio-pdf
+    chart: ./studio-pdf
+    installed: true
+    <<: *default
+
+  - name: studio-service-request
+    chart: ./studio-service-request
+    installed: true
+    <<: *default
+
+  - name: health-individual
+    chart: ./health-individual
+    installed: true
+    <<: *default
+
+  - name: health-service-request
+    chart: ./health-service-request
+    installed: true
+    <<: *default
