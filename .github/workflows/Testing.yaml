@@ -65,7 +65,7 @@ jobs:
           echo "$services" | sed "s/: /=/g" >> $GITHUB_ENV
 
       - name: Digit deployment
-        working-directory: ./deploy-as-code/helm
+        working-directory: ./deploy-as-code
         env:
           HELMFILE_ENV: "env"
         run: |
