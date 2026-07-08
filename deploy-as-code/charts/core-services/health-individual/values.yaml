@@ -29,6 +29,7 @@ healthChecks:
   livenessProbePath: "/health-individual/health"
   readinessProbePath: "/health-individual/health"
 appType: "java-spring"
+disable_otel: true
 tracing-enabled: true
 heap: "-Xmx192m -Xms192m"
 java-args: ""
@@ -158,3 +159,9 @@ env: |
   - name: TRACER_OPENTRACING_ENABLED
     value: "true" 
   {{- end }}
+
+  - name: STATE_LEVEL_TENANT_ID
+    valueFrom:
+      configMapKeyRef:
+        key: egov-state-level-tenant-id
+        name: egov-config

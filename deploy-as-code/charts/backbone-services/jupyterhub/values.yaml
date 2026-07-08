@@ -35,12 +35,13 @@ hub:
   config:
     Authenticator:
       admin_users:
-        - Selco-Uat
+        - admin
     NativeAuthenticator:
       minimum_password_length: 8
       check_common_password: false
       allowed_failed_logins: 5
       seconds_before_next_try: 300
+      # open_signup: true               # enable to create user from UI.
     JupyterHub:
       authenticator_class: "nativeauthenticator.NativeAuthenticator"
       admin_access: true

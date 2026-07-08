@@ -70,12 +70,13 @@ configmaps:
       mdms-v2: "http://mdms-v2.core:8080/"
       health-project: 'http://health-project.core:8080/'
       health-individual: 'http://health-individual.core:8080/'
-      boundary-service: http://boundary-service.core:8080/
+      boundary-service: 'http://boundary-service.core:8080/'
+      billing-service: 'http://billing-service.core:8080/'
 
 root-ingress:
   name: root-ingress
   namespace: core
-  cert-issuer: "letsencrypt-production"
+  cert-issuer: "letsencrypt-prod"
   appRoot: digit-studio
   serviceName: digit-studio
   servicePort: 80

@@ -1,0 +1,157 @@
+# Common Labels
+labels:
+  app: "gateway"
+  group: "gateway"
+
+serviceAccount: gateway
+
+# Init Containers Configs
+initContainers:
+  extraInitContainers: |
+    - name: "gateway-kubernetes-discovery"
+      image: {{ .Values.global.containerRegistry }}/gateway-kubernetes-discovery:core-2.9-lts-mvn-check-7f4ff55ce3-5
+      env: 
+      - name: "OUTPUT_FILE_PATH"
+        value: "/etc/zuul/routes.properties" 
+      - name: "NAMESPACE"
+        value: "core"         
+      volumeMounts:
+      - name: zuul-routes
+        mountPath: /etc/zuul
+
+extraVolumes: |
+  - name: zuul-routes
+    emptyDir: {}  
+
+extraVolumeMounts: |
+  - name: zuul-routes
+    mountPath: "/etc/zuul"
+
+# Container Configs
+image:
+  repository: "egovio/gateway"
+  tag: gateway-form-data-whilelisting-fix-71aff8f
+replicas: "1"
+healthChecks:
+  enabled: true
+  livenessProbePath: "/health"
+  readinessProbePath: "/health"
+custom-filter-property: "false"
+posthook-config: ""
+prehook-config: ""
+heap: "-Xmx512m -Xms512m"
+appType: "java-spring"
+tracing-enabled: true
+server-tomcat-max-threads: "350"
+server-tomcat-max-connections: "1500"
+java-args: ""
+otel: "true"
+egov-open-endpoints-whitelist: "/user/_search,/user/oauth/token,/user-otp/v1/_send,/otp/v1/_validate,/user/citizen/_create,/localization/messages,/localization/messages/v1/_search,/user/password/nologin/_update,/pgr/servicedefinition/v1/_search,/pgr/servicecategories/v1/_search,/pgr/v1/otp/_send,/pgr-master/receivingmode/v1/_search,/tenant/v1/tenant/_search,/egov-location/boundarys,/egov-location/boundarys/boundariesByBndryTypeNameAndHierarchyTypeName,/pgr-master/service/v1/_search,/egov-location/boundarys/getLocationByLocationName,/pgr-master/OTPConfig/_search,/pgr-master/serviceGroup/v1/_search,/egov-location/boundarys/isshapefileexist,/pgr/services/v1/_search,/hr-masters/hrconfigurations/_search,/collection-services/receipts/_view,/pgr-master/service/v2/_search,/pgr-master/servicedefinition/v1/_search,/citizen-services,/citizen-services/v1/requests/receipt/_create,/citizen-services/v1/pgresponse,/citizen-services/v1/requests/anonymous/_search,/egov-mdms-service/v1/_search,/egov-mdms-service/v1/_get,/egov-mdms-service/v1/_reload,/egov-mdms-service/v1/_reloadobj,/egov-location/boundarys/getshapefile,/egov-indexer/index-operations/_index,/egov-indexer/index-operations/_reload,/egov-mdms-service-test/v1/_search,/egov-mdms-create/v1/_update,/egov-mdms-create/v1/_create,/egov-mdms-service-test/v1/_reload,/filestore/v1/files/url,/egov-url-shortening,/egov-url-shortening,/whatsapp-webhook/messages,/edcr/rest/dcr/downloadfile,/dashboard-ingest/ingest/upload,/egov-searcher/water-services/wateropensearch/_get,/egov-searcher/sewerage-services/sewerageopensearch/_get,/xstate-chatbot/status,/xstate-chatbot/reminder,/nlp-engine/fuzzy/city,/nlp-engine/fuzzy/locality,/pet-services/pet-registration/_search,/pet-services/pet-registration/_create,/pet-services/pet-registration/_update,/echallan-services/eChallan/v1/_search,/requester-services-dx/user/authorization/url/citizen,/requester-services-dx/user/token/citizen,/edcr/rest/dcr/anonymousScrutinize,/access/v1/actions/mdms/_get,/user/_search,/filestore/v1/files/id,/filestore/v1/files,/filestore/v1/files/tag,/im-services/v2/video/upload,/filestore/v1/files/get-hls,/activity/v1/activities/workflow/update,/asset-amc/v1/visit/workflow/_update,/asset-amc/v1/visit/_resend_otp,/vendor/organisation/v1/user/_delete,/ingestion-service/template/boundaryIngestionTemplate,/asset-amc/v1/asset/_search,/boundary-service/boundary-relationships/v2/_search,/asset-amc/v1/visit/workflow/_update,/pdf-service/v1/_create"
+egov-mixed-mode-endpoints-whitelist: "/filestore/v1/files/id,/filestore/v1/files,/filestore/v1/files/tag,/user/_search,/access/v1/actions/mdms/_get,/tl-services/v1/_search,/tl-services/v1/BPAREG/_search,/tl-services/v1/BPAREG/_create,/tl-services/v1/BPAREG/_update,/tl-calculator/v1/BPAREG/_getbill,/bpa-services/bpa/appl/_search,/edcr/rest/dcr/scrutinize,/edcr/rest/dcr/scrutinydetails"
+eventlog-enabled: "false"
+eventlog-topic: "springGateway-event-log"
+eventlog-urls-whitelist: ""
+home-isolation-chatbot-router-enabled: false
+memory_limits: "1024Mi"
+memory_requests: "768Mi"
+
+# Additional Container Envs
+env: |
+  - name: SPRING_CODEC_MAX_IN_MEMORY_SIZE
+    value: 50MB
+  - name: URL_LISTS
+    value: "/pt-services-v2/property/_create:http://rainmaker-custom-service:8000/customization/protected/punjab-pt/property/_create|/pt-services-v2/property/_update:http://rainmaker-custom-service:8000/customization/protected/punjab-pt/property/_update|/pt-calculator-v2/propertytax/_estimate:http://rainmaker-custom-service:8000/customization/protected/punjab-pt/pt-calculator-v2/_estimate"
+  - name: CUSTOM_FILTER_PROPERTY
+    value: {{ index .Values "custom-filter-property" | quote }}
+  - name: CUSTOM_FILTER_POSTHOOKS
+    value: "true"
+  - name: CUSTOM_FILTER_PREHOOKS
+    value: "true"
+  - name: URL_POSTHOOK_LISTS
+    value: {{ index .Values "posthook-config" | quote }}
+  - name: URL_PREHOOK_LISTS        
+    value: {{ index .Values "prehook-config" | quote }}
+  - name: GATEWAY_ROUTES_TL_CALCULATOR_URL
+    value: http://tl-calculator:8080/                                  
+  - name: SERVER_PORT
+    value: "8080"
+  {{- if index .Values "java-debug" }}
+  - name: JAVA_ENABLE_DEBUG
+    value: {{ index .Values "java-debug" | quote }}
+  {{- else }}
+  - name: JAVA_ENABLE_DEBUG
+    value: "false"
+  {{- end }}
+  - name: JAVA_OPTS
+    value: {{ index .Values "heap" | quote }}
+  - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+    value: egov-api-gateway
+  - name: SPRING_KAFKA_PRODUCER_KEY_SERIALIZER
+    value: org.apache.kafka.common.serialization.StringSerializer
+  - name: SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER
+    value: org.springframework.kafka.support.serializer.JsonSerializer
+  - name: EGOV_CUSTOM_ASYNC_FILTER_TOPIC
+    value: res-custom-filter
+  - name: EGOV_OPEN_ENDPOINTS_WHITELIST
+    value: {{ index .Values "egov-open-endpoints-whitelist" | quote }}  
+  - name: EGOV_MIXED_MODE_ENDPOINTS_WHITELIST
+    value: {{ index .Values "egov-mixed-mode-endpoints-whitelist" | quote }}    
+  - name: EVENTLOG_ENABLED
+    value: {{ index .Values "eventlog-enabled" | quote }}   
+  - name: EVENTLOG_TOPIC
+    value: {{ index .Values "eventlog-topic" | quote }}   
+  - name: EVENTLOG_URLS_WHITELIST
+    value: {{ index .Values "eventlog-whitelist" | quote }}   
+  - name: EGOV_AUTHORIZE_ACCESS_CONTROL_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-accesscontrol
+  - name: EGOV_AUTH_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-user     
+  - name: GATEWAY_HOST_CONNECT_TIMEOUT_MILLIS
+    value: "20000"
+  - name: GATEWAY_HOST_SOCKET_TIMEOUT_MILLIS
+    value: "60000"
+  {{- if index .Values "tracing-enabled" }}
+  - name: TRACER_OPENTRACING_ENABLED
+    value: "true"
+  {{- end }}
+  - name: SECURITY_BASIC_ENABLED
+    value: "false"
+  - name: MANAGEMENT_SECURITY_ENABLED
+    value: "false"
+  - name: JAVA_ARGS
+    value: {{ index .Values "java-args" | quote }}
+  - name: STATE_LEVEL_TENANT_ID
+    valueFrom:
+      configMapKeyRef:
+        key: egov-state-level-tenant-id
+        name: egov-config    
+  - name: SPRING_DATA_REDIS_DEFAULT_REPLENISHRATE
+    value: "10"
+  - name: SPRING_DATA_REDIS_DEFAULT_BURSTCAPACITY
+    value: "10"
+  - name: SPRING_ROUTES_FILEPATH
+    value: "file:/etc/zuul/routes.properties"   
+  {{- if index .Values "home-isolation-chatbot-router-enabled" }}
+  - name: HOME_ISOLATION_CHATBOT_ROUTER_ENABLED
+    value: {{ index .Values "home-isolation-chatbot-router-enabled" | quote }}  
+  - name: CHATBOT_CONTEXT_PATH
+    value: "/whatsapp-webhook"
+  - name: EGOV_USER_ISOLATION_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: egov-user-enc
+  - name: HOME_ISOLATION_CHATBOT_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: egov-service-host
+        key: home-isolation-chatbot
+  {{- end }}
+  - name: SPRING_DATA_REDIS_HOST     
+    value: "redis.backbone"
