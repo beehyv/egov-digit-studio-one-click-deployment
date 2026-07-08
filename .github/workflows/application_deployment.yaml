@@ -69,4 +69,4 @@ jobs:
         working-directory: deploy-as-code
         env:
           HELMFILE_ENV: ${{ inputs.environment }}
-        run: helmfile -f digit-helmfile.yaml diff --include-needs=true
+        run: helmfile -f digit-helmfile.yaml apply --include-needs=true
