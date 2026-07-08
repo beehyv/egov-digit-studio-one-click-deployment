@@ -29,7 +29,7 @@ healthChecks:
   livenessProbePath: "/health-individual/health"
   readinessProbePath: "/health-individual/health"
 appType: "java-spring"
-# disable_otel: true
+disable_otel: true
 tracing-enabled: true
 heap: "-Xmx192m -Xms192m"
 java-args: ""
