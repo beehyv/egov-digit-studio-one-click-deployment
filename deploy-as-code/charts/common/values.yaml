@@ -129,7 +129,7 @@ extraEnv:
         valueFrom:
           configMapKeyRef:
             name: egov-config
-            key: {{ ternary "db-otel-url" "db-otel-url" .Values.disable_otel }}
+            key: {{ ternary "db-url" "db-otel-url" .Values.disable_otel }}
       - name: FLYWAY_ENABLED
         value: "false"      
       - name: SPRING_FLYWAY_ENABLED
