@@ -1,0 +1,66 @@
+version: v2.9.2
+modules:
+  - name: backbone
+    services:
+      - kafka-kraft
+      - elasticsearch-data
+      - elasticsearch-master
+      - kibana
+      - cert-manager
+      - ingress-nginx
+      - minio
+      - playground
+      - redis
+      - pgadmin
+  - name: core
+    dependencies:
+      - backbone
+    services:
+      boundary-service: master-1e8d2bb
+      boundary-service-db: master-1e8d2bb
+      egov-accesscontrol: master-1e8d2bb
+      egov-enc-service: master-log-enc-ad23f2c
+      egov-enc-service-db: master-log-enc-ad23f2c
+      egov-filestore: master-1e8d2bb
+      egov-filestore-db: master-1e8d2bb
+      egov-idgen: master-1e8d2bb
+      egov-idgen-db: master-1e8d2bb
+      egov-indexer: master-1e8d2bb
+      egov-indexer-db: master-1e8d2bb
+      egov-localization: redis-localization-key-5c0a4c4
+      egov-localization-db: redis-localization-key-5c0a4c4
+      egov-mdms-service: v2.9.2-4a60f20
+      egov-notification-sms: sandbox-d760d6b
+      egov-otp: master-1e8d2bb
+      egov-otp-db: master-1e8d2bb
+      egov-persister: master-3b238aa
+      egov-url-shortening: master-1e8d2bb
+      egov-url-shortening-db: master-1e8d2bb
+      egov-user: sandbox-log-f4a87d0
+      egov-user-db: sandbox-log-f4a87d0
+      egov-workflow-v2: parallel-workflows-lazy-injection-1ace233
+      egov-workflow-v2-db: parallel-workflows-lazy-injection-1ace233
+      inbox: inbox-parallel-workflow-b5cd4a6
+      mdms-v2: master-1e8d2bb
+      mdms-v2-db: master-1e8d2bb
+      pdf-service: multiarch-master-99a308d
+      pdf-service-db: master-aa460e8
+      user-otp: sandbox-log-86902f9
+      egov-hrms: hrms-boundary-individual-61e6097
+      egov-hrms-db: hrms-boundary-individual-61e6097
+      # === studio services === #
+      digit-studio: studio-dev-ui-rc19-5-684a989-1415
+      public-service: CCSD-1853-17eccfa
+      public-service-db: CCSD-1853-17eccfa
+      public-service-init: develop-9087218
+      public-service-init-db: develop-9087218
+      studio-individual: develop-586d99a
+      studio-individual-db: develop-586d99a
+      studio-pdf: develop-16d12f1
+      studio-service-request: develop-586d99a
+      studio-service-request-db: develop-586d99a
+      health-individual: master-nigeria-finalpull-dacaefe
+      health-individual-db: master-nigeria-finalpull-dacaefe
+      health-service-request: multiarch-changes-digit-studio-3fd88be
+      health-service-request-db: multiarch-changes-digit-studio-3fd88be
+      gateway: gateway-form-data-whilelisting-fix-71aff8f

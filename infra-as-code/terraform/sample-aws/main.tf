@@ -1,13 +1,5 @@
 terraform {
-  backend "s3" {
-    bucket = <terraform_state_bucket_name>
-    key    = "terraform-setup/terraform.tfstate"
-    region = "ap-south-1"
-    # The below line is optional depending on whether you are using DynamoDB for state locking and consistency
-    dynamodb_table = <terraform_state_bucket_name>
-    # The below line is optional if your S3 bucket is encrypted
-    encrypt = true
-  }
+  backend "s3" {}
   required_providers {
     kubernetes = {
       source = "hashicorp/kubernetes"
