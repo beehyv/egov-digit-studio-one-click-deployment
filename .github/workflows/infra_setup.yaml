@@ -72,10 +72,10 @@ jobs:
         working-directory: infra-as-code/terraform/sample-aws/remote-state
         run: terraform plan -no-color -input=false --var-file='../variables/${{ inputs.environment }}.tfvars'
 
-      - name: Terraform Apply - remotestate
-        working-directory: infra-as-code/terraform/sample-aws/remote-state
-        run: terraform apply -no-color -input=false -auto-approve --var-file='../variables/${{ inputs.environment }}.tfvars'
-        continue-on-error: true
+      # - name: Terraform Apply - remotestate
+      #   working-directory: infra-as-code/terraform/sample-aws/remote-state
+      #   run: terraform apply -no-color -input=false -auto-approve --var-file='../variables/${{ inputs.environment }}.tfvars'
+      #   continue-on-error: true
 
       # === Create Infra === #
       - name: Terraform init - Infra creation
@@ -93,9 +93,9 @@ jobs:
           --var-file='./variables/${{ inputs.environment }}.tfvars' \
           -var db_password=$db_password
 
-      - name: Terraform Apply - Infra creation
-        working-directory: infra-as-code/terraform/sample-aws
-        run: |
-          terraform apply -no-color -input=false -auto-approve \
-          --var-file='./variables/${{ inputs.environment }}.tfvars' \
-          -var db_password=$db_password
+      # - name: Terraform Apply - Infra creation
+      #   working-directory: infra-as-code/terraform/sample-aws
+      #   run: |
+      #     terraform apply -no-color -input=false -auto-approve \
+      #     --var-file='./variables/${{ inputs.environment }}.tfvars' \
+      #     -var db_password=$db_password
