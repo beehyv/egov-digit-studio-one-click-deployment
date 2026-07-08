@@ -63,3 +63,4 @@ modules:
       health-individual-db: master-nigeria-finalpull-dacaefe
       health-service-request: multiarch-changes-digit-studio-3fd88be
       health-service-request-db: multiarch-changes-digit-studio-3fd88be
+      gateway: gateway-form-data-whilelisting-fix-71aff8f

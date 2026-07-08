@@ -116,3 +116,4 @@ jobs:
             --set user-otp.image.tag=$user-otp \
             --set egov-hrms.image.tag=$egov-hrms \
             --set egov-hrms.initContainers.dbMigration.image.tag=$egov-hrms-db \
+            --set gateway.image.tag=$gateway
