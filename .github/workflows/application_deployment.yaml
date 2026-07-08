@@ -69,7 +69,7 @@ jobs:
         env:
           HELMFILE_ENV: "env"
         run: |
-          helmfile -f digit-helmfile.yaml template --include-needs=true \
+          helmfile -f digit-helmfile.yaml diff --include-needs=true \
             --set digit-studio.image.tag=$digit-studio \
             --set public-service.image.tag=$public-service \
             --set public-service.initContainers.dbMigration.image.tag=$public-service-db \
