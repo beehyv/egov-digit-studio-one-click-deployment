@@ -1,4 +1,4 @@
-name: DIGIT-Install workflow for Testing
+name: Deploy Applications to Cluster
 
 
 on:
