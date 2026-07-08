@@ -4,6 +4,14 @@ name: Deploy Applications to Cluster
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: "Select environment."
+        required: true
+        type: choice
+        options:
+          - env
+        default: env
+
       create_infra:
         description: "Create/Update infracture before deploying."
         type: boolean
@@ -16,12 +24,13 @@ jobs:
     if: ${{ inputs.create_infra }}
     uses: ./.github/workflows/infra_setup.yaml
     with:
-      environment: env
+      environment: ${{ inputs.environment }}
     secrets: inherit
 
   DIGIT-deployment:
     needs: Infra_creation
     if: ${{ !cancelled() && !failure() }}
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -45,8 +54,8 @@ jobs:
           sudo mv sops-v3.7.1.linux /usr/local/bin/sops
 
       # - name: Decrypt secrets
-      #   working-directory: ./deploy-as-code/helm
-      #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/testing-secrets.yaml
+      #   working-directory: ./deploy-as-code
+      #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/${{ inputs.environment }}-secrets.yaml
 
       - name: Install Helmfile
         uses: helmfile/helmfile-action@v2.2.0
@@ -56,64 +65,8 @@ jobs:
           helm-plugins: https://github.com/databus23/helm-diff@v3.1.3
           helmfile-args: --version
 
-      - name: Parse YAML and export as environment variables
-        working-directory: ./deploy-as-code/product-releases
-        run: |
-          services=$(yq e '.modules[]
-            | select(.name == "core" or .name == "digit-studio")
-            | .services' ./v2.9.2.yaml)
-          echo "$services" | sed "s/: /=/g" >> $GITHUB_ENV
-
       - name: Digit deployment
         working-directory: deploy-as-code
         env:
-          HELMFILE_ENV: "env"
-        run: |
-          helmfile -f digit-helmfile.yaml diff --include-needs=true \
-            --set digit-studio.image.tag=$digit-studio \
-            --set public-service.image.tag=$public-service \
-            --set public-service.initContainers.dbMigration.image.tag=$public-service-db \
-            --set public-service-init.image.tag=$public-service-init \
-            --set public-service-init.initContainers.dbMigration.image.tag=$public-service-init-db \
-            --set studio-individual.image.tag=$studio-individual \
-            --set studio-individual.initContainers.dbMigration.image.tag=$studio-individual-db \
-            --set studio-pdf.image.tag=$studio-pdf \
-            --set studio-service-request.image.tag=$studio-service-request \
-            --set studio-service-request.initContainers.dbMigration.image.tag=$studio-service-request-db \
-            --set health-individual.image.tag=$health-individual \
-            --set health-individual.initContainers.dbMigration.image.tag=$health-individual-db \
-            --set health-service-request.image.tag=$health-service-request \
-            --set health-service-request.initContainers.dbMigration.image.tag=$health-service-request-db \
-            --set boundary-service.image.tag=$boundary-service \
-            --set boundary-service.initContainers.dbMigration.image.tag=$boundary-service-db \
-            --set egov-accesscontrol.image.tag=$egov-accesscontrol \
-            --set egov-enc-service.image.tag=$egov-enc-service \
-            --set egov-enc-service.initContainers.dbMigration.image.tag=$egov-enc-service-db \
-            --set egov-filestore.image.tag=$egov-filestore \
-            --set egov-filestore.initContainers.dbMigration.image.tag=$egov-filestore-db \
-            --set egov-idgen.image.tag=$egov-idgen \
-            --set egov-idgen.initContainers.dbMigration.image.tag=$egov-idgen-db \
-            --set egov-indexer.image.tag=$egov-indexer \
-            --set egov-indexer.initContainers.dbMigration.image.tag=$egov-indexer-db \
-            --set egov-localization.image.tag=$egov-localization \
-            --set egov-localization.initContainers.dbMigration.image.tag=$egov-localization-db \
-            --set egov-mdms-service.image.tag=$egov-mdms-service \
-            --set egov-notification-sms.image.tag=$egov-notification-sms \
-            --set egov-otp.image.tag=$egov-otp \
-            --set egov-otp.initContainers.dbMigration.image.tag=$egov-otp-db \
-            --set egov-persister.image.tag=$egov-persister \
-            --set egov-url-shortening.image.tag=$egov-url-shortening \
-            --set egov-url-shortening.initContainers.dbMigration.image.tag=$egov-url-shortening-db \
-            --set egov-user.image.tag=$egov-user \
-            --set egov-user.initContainers.dbMigration.image.tag=$egov-user-db \
-            --set egov-workflow-v2.image.tag=$egov-workflow-v2 \
-            --set egov-workflow-v2.initContainers.dbMigration.image.tag=$egov-workflow-v2-db \
-            --set inbox.image.tag=$inbox \
-            --set mdms-v2.image.tag=$mdms-v2 \
-            --set mdms-v2.initContainers.dbMigration.image.tag=$mdms-v2-db \
-            --set pdf-service.image.tag=$pdf-service \
-            --set pdf-service.initContainers.dbMigration.image.tag=$pdf-service-db \
-            --set user-otp.image.tag=$user-otp \
-            --set egov-hrms.image.tag=$egov-hrms \
-            --set egov-hrms.initContainers.dbMigration.image.tag=$egov-hrms-db \
-            --set gateway.image.tag=$gateway
+          HELMFILE_ENV: ${{ inputs.environment }}
+        run: helmfile -f digit-helmfile.yaml diff --include-needs=true
