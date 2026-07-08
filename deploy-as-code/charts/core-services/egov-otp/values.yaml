@@ -29,7 +29,7 @@ healthChecks:
   livenessProbePath: "/otp/health"
   readinessProbePath: "/otp/health"
 appType: "java-spring"
-disable_otel: true
+# disable_otel: true
 tracing-enabled: true
 heap: "-Xmx256m -Xms256m"
 memory_limits: 512Mi

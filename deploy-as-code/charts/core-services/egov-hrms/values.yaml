@@ -56,7 +56,7 @@ healthChecks:
   livenessProbePath: "/egov-hrms/health"
   readinessProbePath: "/egov-hrms/health"
 appType: "java-spring"
-disable_otel: true
+# disable_otel: true
 tracing-enabled: true
 employee-applink: "https://egov-micro-dev.egovernments.org/employee/user/login"
 heap: "-Xmx192m -Xms192m"
