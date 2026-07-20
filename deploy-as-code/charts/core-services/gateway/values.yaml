@@ -30,7 +30,7 @@ extraVolumeMounts: |
 # Container Configs
 image:
   repository: "egovio/gateway"
-  tag: gateway-form-data-whilelisting-fix-71aff8f
+  tag: gateway-2.9.2-base-docker-upgrade-b6ce8ad
 replicas: "1"
 healthChecks:
   enabled: true

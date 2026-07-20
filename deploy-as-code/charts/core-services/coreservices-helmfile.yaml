@@ -49,9 +49,12 @@ releases:
     installed: true
     <<: *default
 
+  # Retired: was an ingress-only shim rewriting /egov-mdms-service/* to /mdms-v2/*
+  # before the gateway's RBAC check ran, so it authorized against the wrong path.
+  # mdms-v2 now natively serves /egov-mdms-service (see mdms-v2/values.yaml ingress.context).
   - name: egov-mdms-service
     chart: ./egov-mdms-service
-    installed: true
+    installed: false
     <<: *default
 
   - name: egov-notification-sms
