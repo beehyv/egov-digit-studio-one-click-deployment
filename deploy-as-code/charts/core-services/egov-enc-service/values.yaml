@@ -61,7 +61,7 @@ env: |
   - name: SERVER_CONTEXT_PATH
     value: /egov-enc-service    
   - name: EGOV_MDMS_SEARCH_ENDPOINT
-    value: "/mdms-v2/v1/_search" 
+    value: "/egov-mdms-service/v1/_search"
   - name: MASTER_PASSWORD_PROVIDER
     value: {{ index .Values "master-password-provider" | quote }}
   {{- if index .Values "number-of-symmetric-keys-per-tenant" }}
