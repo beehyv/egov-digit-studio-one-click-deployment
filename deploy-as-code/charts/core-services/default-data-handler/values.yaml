@@ -58,7 +58,21 @@ env: |
         name: egov-service-host
         key: mdms-v2
   - name: EGOV_MDMS_SEARCH_ENDPOINT
+<<<<<<< Updated upstream
     value: "/mdms-v2/v1/_search" 
+=======
+    value: "/egov-mdms-service/v1/_search"
+  - name: EGOV_MDMS_DATA_CREATE_ENDPOINT
+    value: "/egov-mdms-service/v2/_create/{schemaCode}"
+  - name: EGOV_MDMS_DATA_SEARCH_ENDPOINT
+    value: "/egov-mdms-service/v2/_search"
+  - name: EGOV_MDMS_SCHEMA_CREATE_ENDPOINT
+    value: "/egov-mdms-service/schema/v1/_create"
+  - name: EGOV_MDMS_SCHEMA_SEARCH_ENDPOINT
+    value: "/egov-mdms-service/schema/v1/_search"
+  - name: EGOV_MDMS_DEFAULT_DATA_CREATE_ENDPOINT
+    value: "/egov-mdms-service/defaultdata/_create"
+>>>>>>> Stashed changes
   - name: EGOV_HRMS_HOST
     valueFrom:
       configMapKeyRef:
