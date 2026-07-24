@@ -131,6 +131,12 @@ Requires GitHub secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGIO
 | MDMS | `http://mdms-v2.core:8080/` |
 | Public service | `http://public-service.core:8080/` |
 
+> **⚠️ DNS mapping required after apply (cloud):** `helmfile apply` does not register your domain anywhere. If `ingress-nginx` (backbone) is enabled, it provisions a `LoadBalancer` Service with an AWS-assigned hostname — `global.domain` (`env.yaml`) only resolves once you point DNS at it:
+> ```bash
+> kubectl get svc -n backbone ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+> ```
+> Create a CNAME for `global.domain` → that hostname. Do this **before** cert-manager runs its HTTP-01 challenge, or certificate issuance will fail. See [DNS after Helmfile apply](#aws-infrastructure-sample-aws) for details.
+
 ---
 
 ## Namespaces
