@@ -37,7 +37,7 @@ Supported targets:
 | **Minikube** | Alternative local cluster (configure ingress separately) |
 | **Any CNCF-compliant cluster** | Ensure enough CPU/RAM for backbone + core + studio |
 
-**Rough capacity (full stack, in-cluster Postgres/Kafka/ES):** 10+ GB RAM and 4+ CPUs available to the cluster (Kind: allocate in Docker Desktop / Podman).
+**Rough capacity (full stack, in-cluster Postgres/Kafka/ES):** 10+ GB RAM and 8+ CPUs available to the cluster (Kind: allocate in Docker Desktop / Podman).
 
 Helm charts and Helmfile deploy workloads; optional Terraform under `infra-as-code/terraform/` provisions AWS EKS/RDS (see [GitHub Actions (EKS)](#github-actions-eks) or `infra-as-code/terraform/sample-aws/`).
 
@@ -268,4 +268,4 @@ egov-digit-studio-one-click-deployment/
 | **Namespaces** | `core`, `backbone`, `monitoring`; pgadmin/playground/cert-manager run in `backbone` when that layer is enabled |
 | **External RDS** | Point `db-host` / `db-url` in `egov-config` at RDS instead of in-cluster Postgres |
 | **Namespace rename** | YAML changes do not migrate existing workloads |
-| **UI** | `digit-studio` chart ingress (no separate gateway chart) |
+| **UI** | `digit-studio` chart owns the root ingress; the `gateway` release (`core-services/gateway`, Spring Cloud Gateway) is an internal backend service with no ingress of its own |
