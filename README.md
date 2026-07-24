@@ -145,6 +145,18 @@ Application workloads use three namespaces (`core`, `backbone`, `monitoring`). T
 
 ---
 
+## JupyterHub (backbone)
+
+`jupyterhub` (backbone layer, `charts/backbone-services/jupyterhub`) uses `NativeAuthenticator`, which has self-signup off by default — with no users provisioned yet, you can't log in.
+
+**First deploy only:** before `helmfile apply`, set `open_signup: true` under `hub.config.NativeAuthenticator` in `jupyterhub/values.yaml` (or via an env override)
+
+Then sign up your admin user (must match `hub.config.Authenticator.admin_users`, default `admin`) through the UI, then set `open_signup` back to `false` (or remove the override) and re-apply. Leaving it `true` lets anyone create an account.
+
+**URL:** `https://<domain>/jupyterhub` (`ingress.hosts` = `global.domain`, path = `hub.baseUrl`).
+
+---
+
 ## Why the configmaps release is required
 
 The **configmaps** chart (first release in `coreservices-helmfile.yaml`) materializes shared platform config before services start:
@@ -232,6 +244,14 @@ terraform apply -var-file=./variables/env.tfvars -var db_password='<password>'
 ```
 
 After apply, copy RDS endpoint / credentials into `deploy-as-code/charts/environments/env.yaml` and `env-secrets.yaml`, then run Helmfile (or use **Deploy Applications to Cluster**). The GitHub **Setup Infrastructure** workflow runs the same Terraform paths but currently stops at `plan` (apply steps are commented out).
+
+**DNS after Helmfile apply:** `ingress-nginx` (`controller.service.type: LoadBalancer`) provisions an AWS ELB/NLB with an auto-generated hostname — there's no ExternalDNS wired up to do this for you. Get it with:
+
+```bash
+kubectl get svc -n backbone ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+```
+
+Then create a CNAME for `global.domain` (`deploy-as-code/charts/environments/env.yaml`) pointing at that hostname in your DNS provider. Do this before relying on TLS/cert-manager, since `HTTP-01` validation needs the domain resolving to the load balancer first.
 
 ---
 
