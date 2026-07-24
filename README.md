@@ -17,7 +17,7 @@ Helmfile deploy for Digit Studio on Kubernetes. Pattern matches [DIGIT-DevOps](h
 | [Helmfile](https://github.com/helmfile/helmfile) | latest stable | Orchestrates layered deploy |
 | [Docker](https://docs.docker.com/get-docker/) | — | Required for Kind; image pulls on nodes |
 
-**Cloud / encrypted secrets (optional):** [SOPS](https://github.com/getsops/sops) + AWS KMS per `deploy-as-code/charts/.sops.yaml`.
+**Cloud / encrypted secrets (optional):** [SOPS](https://github.com/getsops/sops) + AWS KMS per `deploy-as-code/charts/.sops.yaml`. That file is pinned to eGov's own KMS key ARN — in your own AWS account, swap in your KMS key ARN, see [GitHub Actions (EKS)](#github-actions-eks).
 
 ### Kubernetes cluster
 
@@ -185,6 +185,20 @@ Templates under `charts/core-services/configmaps/templates/` (`egov-config.yaml`
 export HELMFILE_ENV=env
 ```
 
+### Cert-manager ACME email (backbone)
+
+`cert-manager/values.yaml` defaults `clusterIssuer.prod.acme.email` / `clusterIssuer.stage.acme.email` to eGov's own address (`sre-staff@egovernments.org`). Since `charts/environments/env.yaml` is merged on top of each chart's own values, override it for your environment by adding to `env.yaml`:
+
+```yaml
+clusterIssuer:
+  prod:
+    acme:
+      email: you@yourdomain.com
+  stage:
+    acme:
+      email: you@yourdomain.com
+```
+
 ### Image tags (core + digit-studio)
 
 Tags live in `charts/environments/image-tags.yaml`. Each chart block sets `image.tag` (and `initContainers.dbMigration.image.tag` where applicable). `global.image.tag` in that file is the shared fallback for charts without an explicit override.
@@ -243,7 +257,13 @@ terraform plan  -var-file=./variables/env.tfvars -var db_password='<password>'
 terraform apply -var-file=./variables/env.tfvars -var db_password='<password>'
 ```
 
-After apply, copy RDS endpoint / credentials into `deploy-as-code/charts/environments/env.yaml` and `env-secrets.yaml`, then run Helmfile (or use **Deploy Applications to Cluster**). The GitHub **Setup Infrastructure** workflow runs the same Terraform paths but currently stops at `plan` (apply steps are commented out).
+After apply, point `kubectl`/Helmfile at the new cluster (the GitHub Actions workflow does this via `aws-actions/configure-aws-credentials` + the same command):
+
+```bash
+aws eks update-kubeconfig --region <region> --name <cluster_name>
+```
+
+Then copy RDS endpoint / credentials into `deploy-as-code/charts/environments/env.yaml` and `env-secrets.yaml`, then run Helmfile (or use **Deploy Applications to Cluster**). The GitHub **Setup Infrastructure** workflow runs the same Terraform paths but currently stops at `plan` (apply steps are commented out).
 
 **DNS after Helmfile apply:** `ingress-nginx` (`controller.service.type: LoadBalancer`) provisions an AWS ELB/NLB with an auto-generated hostname — there's no ExternalDNS wired up to do this for you. Get it with:
 
