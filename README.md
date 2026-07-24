@@ -164,7 +164,7 @@ All environment files live under `deploy-as-code/charts/environments/`:
 | File | Role |
 |------|------|
 | `environments/<HELMFILE_ENV>.yaml` | Domain, `egov-config` / `egov-service-host` data, per-service replicas/tuning |
-| `environments/<HELMFILE_ENV>-secrets.yaml` | Passwords, keys — currently plaintext (see [SOPS note](#prerequisites)) |
+| `environments/<HELMFILE_ENV>-secrets.yaml` | Passwords, keys — plaintext for testing; SOPS for cloud |
 | `environments/image-tags.yaml` | Per-service `image.tag` (and `initContainers.dbMigration.image.tag`) |
 
 ```bash
