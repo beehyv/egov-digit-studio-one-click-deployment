@@ -2,7 +2,7 @@
 
 Helmfile deploy for Digit Studio on Kubernetes. Pattern matches [DIGIT-DevOps](https://github.com/egovernments/DIGIT-DevOps) `deploy-as-code`.
 
-**Entry point:** `deploy-as-code/helm/digit-helmfile.yaml`
+**Entry point:** `deploy-as-code/digit-helmfile.yaml`
 
 ---
 
@@ -17,7 +17,9 @@ Helmfile deploy for Digit Studio on Kubernetes. Pattern matches [DIGIT-DevOps](h
 | [Helmfile](https://github.com/helmfile/helmfile) | latest stable | Orchestrates layered deploy |
 | [Docker](https://docs.docker.com/get-docker/) | — | Required for Kind; image pulls on nodes |
 
-**Cloud / encrypted secrets (optional):** [SOPS](https://github.com/getsops/sops) + AWS KMS per `deploy-as-code/helm/.sops.yaml`.
+**Cloud / encrypted secrets (optional):** [SOPS](https://github.com/getsops/sops) + AWS KMS per `deploy-as-code/charts/.sops.yaml`.
+
+The decrypt step is currently commented out in the GitHub Actions workflows, so `env-secrets.yaml` ships as plaintext today — wire the `sops -d` step back in before relying on encryption.
 
 ### Kubernetes cluster
 
@@ -35,11 +37,13 @@ Supported targets:
 | **Kind** (local) | Laptop dev — see [Local cluster (Kind)](#local-cluster-kind) |
 | **EKS / GKE / AKS** | Shared or production environments |
 | **Minikube** | Alternative local cluster (configure ingress separately) |
-| **Any CNCF-compliant cluster** | Ensure enough CPU/RAM for backbone + core + studio |
+| **Any CNCF-compliant cluster** | Ensure enough CPU/RAM for backbone + core |
 
-**Rough capacity (full stack, in-cluster Postgres/Kafka/ES):** 10+ GB RAM and 4+ CPUs available to the cluster (Kind: allocate in Docker Desktop / Podman).
+**Rough capacity (full stack, in-cluster Kafka/ES/MinIO):** 10+ GB RAM and 4+ CPUs available to the cluster (Kind: allocate in Docker Desktop / Podman). Postgres is expected to be an external RDS instance by default (see [Notes](#notes)).
 
 This repo does **not** provision cloud accounts or managed Kubernetes — only Helm charts and Helmfile.
+
+Terraform for infra live under `infra-as-code/` and are invoked separately by the `infra_setup.yaml` / `infra_destroy.yaml` GitHub workflows.
 
 ---
 
@@ -61,7 +65,7 @@ kubectl config use-context kind-digit-studio
 kubectl get nodes
 ```
 
-Then deploy with `HELMFILE_ENV=testing` (see [Quick start](#quick-start)). Use `global.setup: quickstart` in `testing.yaml` (no cert-manager).
+Then deploy with `HELMFILE_ENV=env` (see [Quick start](#quick-start)). For local testing without cert-manager, set `global.setup: quickstart` in `env.yaml` — this drops the `cert-manager.io/cluster-issuer` annotation and TLS block from the root ingress template.
 
 **Tear down:**
 
@@ -69,19 +73,30 @@ Then deploy with `HELMFILE_ENV=testing` (see [Quick start](#quick-start)). Use `
 kind delete cluster --name digit-studio
 ```
 
-**Without Kubernetes:** use Docker Compose in `../egov-digit-studio/`.
-
 ---
 
 ## Quick start
 
 ```bash
-cd deploy-as-code/helm
-export HELMFILE_ENV=testing
-# Edit environments/testing.yaml → images.defaultTag (and images.overrides if needed)
+cd deploy-as-code
+export HELMFILE_ENV=env
+# Edit charts/environments/image-tags.yaml → per-service image.tag
+# Edit charts/environments/env.yaml → domain, egov-config / egov-service-host data
+# Edit charts/environments/env-secrets.yaml → db/minio/kafka/etc. credentials
 
 helmfile -f digit-helmfile.yaml apply --include-needs=true
 ```
+
+`digit-helmfile.yaml` only wires in `core-services` by default — `backbone-services` and `monitoring` are commented out:
+
+```yaml
+helmfiles:
+#  - path: ./charts/backbone-services/backboneservices-helmfile.yaml
+   - path: ./charts/core-services/coreservices-helmfile.yaml
+  # - path: ./charts/monitoring/monitoring-helmfile.yaml
+```
+
+`env.yaml` already points Kafka/Elasticsearch/MinIO at `*.backbone` service hosts, so **uncomment the `backbone-services` line** unless those are provided externally. Uncomment `monitoring` if you want Prometheus/Grafana/Loki.
 
 ```bash
 helmfile -f digit-helmfile.yaml diff
@@ -89,12 +104,12 @@ helmfile -f digit-helmfile.yaml list
 helmfile -f digit-helmfile.yaml template
 ```
 
-Skip a layer: comment its path in `digit-helmfile.yaml` (monitoring is off by default).
+Skip a layer: comment its path in `digit-helmfile.yaml` (backbone-services and monitoring is off by default).
 
 **Verify:**
 
 ```bash
-kubectl get ns core backbone digit-studio monitoring
+kubectl get ns core backbone monitoring
 kubectl get configmap -n core egov-config egov-service-host
 kubectl get secret -n core db
 ```
@@ -103,113 +118,104 @@ kubectl get secret -n core db
 
 ## What `helmfile apply` does
 
-| # | Layer | Namespace | What gets created |
-|---|--------|-----------|-------------------|
-| 1 | **cluster-configs** | release in `core` | Namespaces, `egov-config` / `egov-service-host`, Secrets, RBAC, root ingress |
-| 2 | **backbone** | `backbone` | Postgres, Kafka, Redis, Elasticsearch, MinIO, ingress-nginx |
-| 3 | **core** | `core` | DIGIT core + egov-hrms |
-| 4 | **studio** | `digit-studio` | digit-studio, public-service, health services, … |
-| 5 | **monitoring** | `monitoring` | Prometheus, Grafana, Loki *(optional)* |
+| # | Helmfile | Namespace | What gets created |
+|---|----------|-----------|-------------------|
+| 1 | `charts/backbone-services/backboneservices-helmfile.yaml` | `backbone` | Kafka, Redis, Elasticsearch, MinIO, ingress-nginx, cert-manager, kibana, playground, jupyterhub, pgadmin4 (in-cluster `postgresql` chart present but `installed: false`) |
+| 2 | `charts/core-services/coreservices-helmfile.yaml` | `core` | `configmaps` release (ConfigMaps/Secrets/root ingress) + all DIGIT core services + gateway + studio services (`digit-studio`, `public-service`, `studio-individual`, `studio-pdf`, `studio-service-request`, `health-individual`, `health-service-request`) |
+| 3 | `charts/monitoring/monitoring-helmfile.yaml` | `monitoring` (+ `kafka-ui` in `backbone`) | Prometheus, Grafana, Loki (`jaeger`/`blackbox` present but `installed: false`) |
 
-**DNS examples** (`testing.yaml`):
+
+**DNS examples** (`env.yaml` defaults):
 
 | Target | URL |
 |--------|-----|
-| Postgres | `postgres.backbone:5432` |
+| Postgres | external RDS host set in `egov-config.db-host` (in-cluster `postgres.backbone:5432` if you enable the disabled `postgresql` release) |
 | MDMS | `http://mdms-v2.core:8080/` |
-| Public service | `http://public-service.digit-studio:8080/` |
+| Public service | `http://public-service.core:8080/` |
 
 ---
 
 ## Namespaces
 
-Created by the **cluster-configs** chart (not Helmfile directly):
-
-1. Template: `charts/cluster-configs/templates/namespaces.yaml`
-2. When `cluster-configs.namespaces.create: true`, emits one `Namespace` per entry in `cluster-configs.namespaces.values`
-3. Later layers deploy into those namespaces
-
-```yaml
-# environments/<env>.yaml
-cluster-configs:
-  namespaces:
-    create: true
-    values:
-      - core
-      - backbone
-      - digit-studio
-      - monitoring
-```
+Namespaces `core`, `backbone`, and `monitoring` are created automatically by Helm the first time a release targeting them is applied.
 
 ---
 
-## Why cluster-configs is required
+## Why the `configmaps` release is required
 
-| Resource | Names | Namespaces | Purpose |
-|----------|-------|------------|---------|
-| ConfigMap | `egov-config` | `core`, `digit-studio` | DB, Kafka, ES, domain, tenant IDs |
-| ConfigMap | `egov-service-host` | `core`, `digit-studio` | Inter-service HTTP URLs |
-| Secret | `db` | `core` | Postgres / Flyway credentials |
-| Secret | `minio`, `kafka-kraft` | `backbone` | Object store, Kafka cluster id |
-| Secret | `elasticsearch-master-creds` | `backbone`, `core` | Elasticsearch auth |
+`configmaps` (`charts/core-services/configmaps`) is a normal release inside `coreservices-helmfile.yaml` — not a separate layer. It renders:
 
-Templates under `charts/cluster-configs/templates/` (`namespaces.yaml`, `configmaps/`, `secrets/`).
+| Resource | Names | Namespace | Purpose |
+|----------|-------|-----------|---------|
+| ConfigMap | `egov-config`, `egov-service-host` | `core` | DB, Kafka, ES, domain, tenant IDs, inter-service HTTP URLs |
+| Secret | `db`, `git-creds`, `egov-filestore`, `egov-location`, `egov-enc-service`, `egov-notification-sms`, `egov-notification-mail`, `elasticsearch-master-credentials`, `egov-hrms`, `minio` | `core` | Per-service credentials |
+| Secret | `pgadmin` | `backbone` | pgAdmin login |
+| Secret | `alertmanager-main` | `monitoring` | Alertmanager routing config |
+| Ingress | `root-ingress` | `core` | Routes `http(s)://<domain>/` to the `digit-studio` Service |
+
+Templates under `charts/core-services/configmaps/templates/` (`egov-config.yaml`, `egov-service-host.yaml`, `root-ingress.yaml`, `secrets/`). Values for all of the above live in `configmaps/values.yaml` and get overridden per environment from `charts/environments/env.yaml` / `env-secrets.yaml`.
 
 ---
 
 ## Environment files
 
+All environment files live under `deploy-as-code/charts/environments/`:
+
 | File | Role |
 |------|------|
-| `environments/<HELMFILE_ENV>.yaml` | Domain, namespaces, ConfigMaps, service URLs, replicas |
-| `environments/<HELMFILE_ENV>-secrets.yaml` | Passwords, keys (plaintext for `testing`; SOPS for cloud) |
+| `environments/<HELMFILE_ENV>.yaml` | Domain, `egov-config` / `egov-service-host` data, per-service replicas/tuning |
+| `environments/<HELMFILE_ENV>-secrets.yaml` | Passwords, keys — currently plaintext (see [SOPS note](#prerequisites)) |
+| `environments/image-tags.yaml` | Per-service `image.tag` (and `initContainers.dbMigration.image.tag`) |
 
 ```bash
-export HELMFILE_ENV=testing
+export HELMFILE_ENV=env
 ```
 
-### Image tags (core + digit-studio)
+### Image tags (core + studio services)
 
-Single control point in `<env>.yaml`. Charts using the **common** library resolve the tag in this order:
-
-1. `image.tag` on the chart (or under a per-service block, e.g. `egov-user.image.tag`)
-2. `images.overrides.<chart-name>` (`egov-user`, `digit-studio`, `health-individual`, …)
-3. `images.defaultTag`
-4. `global.image.tag` (fallback)
+Each chart block in `image-tags.yaml` sets its own `image.tag` directly — there's no `defaultTag`/`overrides`/`global.image.tag` fallback chain; whatever `image-tags.yaml` sets simply overrides that chart's own `values.yaml` default when Helmfile merges values.
 
 ```yaml
-images:
-  registry: egovio
-  defaultTag: v2.9.2-4a60f20
-  overrides:
-    health-individual: Individual-master-register-studio-d307985
+egov-user:
+  image:
+    tag: sandbox-log-f4a87d0
+  initContainers:
+    dbMigration:
+      image:
+        tag: sandbox-log-f4a87d0
 ```
 
-Flyway init images (`egov-user-db`, etc.) use the **same tag** as the parent service.
+Flyway/db-migration init containers get their tag set alongside the parent service in the same block.
 
 ### Root ingress
 
-`cluster-configs.root-ingress` routes `http(s)://<domain>/` to the **digit-studio** Service in **digit-studio** (`appRoot: digit-studio` → `/digit-studio/`). Ingress must live in the **same namespace** as that Service.
+The `root-ingress` release (part of `configmaps`) routes `http(s)://<domain>/` to the **digit-studio** Service in **core** (`appRoot: digit-studio` → `/digit-studio/`). Ingress must live in the same namespace as that Service.
+
+Setting `global.setup: quickstart` drops the cert-manager annotation and TLS block for local/no-TLS testing.
 
 ---
 
 ## Layout
 
-```
+```bash
 egov-digit-studio-one-click-deployment/
 ├── README.md
 ├── kind-cluster.yaml
-└── deploy-as-code/helm/
+├── configs/                          # static assets (e.g. globalConfigsStudio.js)
+├── infra-as-code/                    # Terraform + Ansible, driven by infra_setup/infra_destroy workflows
+└── deploy-as-code/
     ├── digit-helmfile.yaml
-    ├── environments/
-    │   ├── testing.yaml
-    │   └── testing-secrets.yaml
     └── charts/
-        ├── cluster-configs/
-        ├── backbone-services/
-        ├── core-services/
-        ├── studio-services/
-        └── monitoring/
+        ├── .sops.yaml
+        ├── environments/
+        │   ├── env.yaml
+        │   ├── env-secrets.yaml
+        │   └── image-tags.yaml
+        ├── common/                   # shared library chart (_deployment, _service, _ingress, …)
+        ├── common-chart-template/    # scaffold for new service charts
+        ├── backbone-services/        # backboneservices-helmfile.yaml + charts (kafka-kraft, elasticsearch, minio, ingress-nginx, cert-manager, …)
+        ├── core-services/            # coreservices-helmfile.yaml + charts (DIGIT core, gateway, configmaps, and studio services)
+        └── monitoring/               # monitoring-helmfile.yaml + charts (prometheus, grafana, loki, kafka-ui)
 ```
 
 ---
@@ -218,7 +224,8 @@ egov-digit-studio-one-click-deployment/
 
 | Topic | Detail |
 |-------|--------|
-| **Four namespaces** | Only `core`, `backbone`, `digit-studio`, `monitoring` are created; pgadmin/playground/cert-manager run in `backbone` |
-| **External RDS** | Point `db-host` / `db-url` in `egov-config` at RDS instead of `postgres.backbone` |
+| **Three namespaces** | `core`, `backbone`, `monitoring` — studio services now deploy into `core` alongside DIGIT core; pgadmin4/playground/cert-manager run in `backbone` |
+| **Postgres** | Default (`env.yaml`) points `db-host`/`db-url` at an external RDS instance; the in-cluster `postgresql` chart under `backbone-services` exists but is `installed: false` |
 | **Namespace rename** | YAML changes do not migrate existing workloads |
-| **UI** | `digit-studio` chart ingress (no separate gateway chart) |
+| **UI** | `digit-studio` chart owns the ingress; the `gateway` chart has no ingress template of its own |
+| **Default-off layers** | `backbone-services` and `monitoring` are commented out in `digit-helmfile.yaml` — uncomment to deploy them |

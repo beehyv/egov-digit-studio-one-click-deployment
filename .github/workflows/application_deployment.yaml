@@ -54,7 +54,7 @@ jobs:
           sudo mv sops-v3.7.1.linux /usr/local/bin/sops
 
       # - name: Decrypt secrets
-      #   working-directory: ./deploy-as-code
+      #   working-directory: ./deploy-as-code/charts
       #   run: sops -d -i --kms ${{ secrets.PUBLIC_KMS_KEY }} ./environments/${{ inputs.environment }}-secrets.yaml
 
       - name: Install Helmfile
