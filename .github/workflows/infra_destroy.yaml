@@ -11,13 +11,6 @@ on:
           - env
         default: env
 
-  workflow_call:
-    inputs:
-      environment:
-        description: "Select environment."
-        required: true
-        type: string
-
 jobs:
   infra-creation:
     runs-on: ubuntu-latest
