@@ -157,6 +157,15 @@ Application workloads use three namespaces (`core`, `backbone`, `monitoring`). T
 
 **First deploy only:** before `helmfile apply`, set `open_signup: true` under `hub.config.NativeAuthenticator` in `jupyterhub/values.yaml` (or via an env override)
 
+```yaml
+# deploy-as-code/charts/backbone/jupyterhub/values.yaml
+hub:
+  config:
+    NativeAuthenticator:
+      ...
+      open_signup: true        # Enable this to create jupyterhub user from UI.
+```
+
 Then sign up your admin user (must match `hub.config.Authenticator.admin_users`, default `admin`) through the UI, then set `open_signup` back to `false` (or remove the override) and re-apply. Leaving it `true` lets anyone create an account.
 
 **URL:** `https://<domain>/jupyterhub` (`ingress.hosts` = `global.domain`, path = `hub.baseUrl`).
